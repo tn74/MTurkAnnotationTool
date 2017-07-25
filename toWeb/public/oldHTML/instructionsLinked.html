@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Blog Home - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/blog-home.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand"> Duke University Data Plus: Energy Access Team</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+
+        <div id = "a" class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-12">
+                <table>
+                    <tr>
+                        <td width = 250>
+                            <h1>
+                                Instructions
+                            </h1>
+                        </td>
+                        <td>
+                            <form name = "toIndex" method="post" action="index.html"><br><button type="submit" style = "">Skip</button></form>
+                        </td>
+                    </tr>
+                </table>
+
+                <hr>
+
+                <!-- First Blog Post -->
+                <h3> General Instructions </h3>
+                <p> Welcome! In this HIT, we will ask you to mark several objects in an image. We will be asking you to annotate objects that would indicate whether or not a community has access to electricity. Please follow the instructions below: </p>
+                <ol>
+                    <li> <b> Read these instructions carefully. </b> When you have completed them, click the "Annotate" button at the bottom of the page. This will take you to a page where you can annotate an image. These instructions are the same every time you complete this task, however, so if you have done this task multiple times, feel free to skip. </li>
+                    <li> You will see a table at the top of the screen which will tell you what and how to annotate. The rows of the table will be: 
+                        <ol type = "i">
+                            <li> Sample image of what the object looks like </li>
+                            <li> Name of Object </li>
+                            <li> Tool to Annotate that object </li>
+                        </ol>
+                    <p> See the Example Below: </p> </li>
+                    <img hspace = 100 src = "images/stock/exampleAnnotation.png" width = 600 style="border:3px; border-style: dashed; border-color: #338AFF;">
+                    <br>
+                    <br>
+                    <li> Select the polygon tool and draw polygons around any objects you see that match the first sample image.</li>
+                    <li> Select the line tool and draw a line where youse see anything which matches second sample image.</li>
+                    <li> Select the label tool and label everything that resembles the labeled object in the third sample image.</li>
+                    <li> Hit <b>submit</b> once you have finished your annotations. </li>
+                </ol>
+                <hr>
+                <h3> Using the Tools </h3>
+                <h4> Polygon </h4>
+                    <ol>
+                        <li> Click on the edge of the object you would like to outline. </li>
+                        <li> Click around the perimter of the object you wish to outline </li>
+                        <li> Click on the first vertex to close the polygon </li>
+                        <li> Your polygon will turn from cyan and red to purple and blue because it is complete </li>
+                        <li> You will be allowed to switch tools </li>
+                        <li> <b>Delete</b> the last <b>polygon</b> you created with "<b>Q</b>" </li>
+                    </ol>
+                <h4> Line </h4>
+                    <ol>
+                        <li> Click at the start of the line you would like to draw </li>
+                        <li> Keep clicking along the path you wish to draw </li>
+                        <li> Hit "<b>L</b>" to <b>complete the line</b> once you have finished outlining it. </li>
+                        <li> Your line will turn from cyan and red to orange and green because it is complete. </li>
+                        <li> You will be allowed to switch tools </li>
+                        <li> <b>Delete</b> the last <b>line</b> you created with "<b>W</b>" </li>
+                    </ol>
+                <h4> Line </h4>
+                    <ol>
+                        <li> Click at the start of the line you would like to draw </li>
+                        <li> Keep clicking along the path you wish to draw </li>
+                        <li> Hit "L" to complete the line once you have finished outlining it. </li>
+                        <li> Your polygon will turn from cyan and red to purple and blue because it is complete. </li>
+                        <li> You will be allowed to switch tools </li>
+                        <li> <b>Delete</b> the last <b>point</b> you labelled with "<b>E</b>" </li>
+                    </ol>
+                <hr>
+                <h3> Other Notes </h3>
+                    <ul>
+                        <li> If you mess up the annotation you are currently working on, hit "<b>R</b>" to <b>reset</b></li>
+                        <li> You will be unable to change your annotation type while in the middle of making a line or polygon </li>
+                        <li> Completed polygons will show up purple and blue. Completed lines will show up orange and green. Completed points will be hot pink </li>
+                    </ul>
+
+                <form id = "Annotate" name = "toIndex" method="post" action="index.html"><br><button type="submit">Annotate</button></form>
+
+                
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Electricity Access Group of Duke Data+</p>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Passing on iamge parameters to index.html page -->
+    <script type = "text/javascript">
+        function gup(name){
+            var regexS = "[\\?&]"+name+"=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var tmpURL = window.location.href;
+            var results = regex.exec( tmpURL );
+            console.log(results);
+            if( results == null )
+              return "";
+            else
+              return results[1];
+        }
+
+        els = document.getElementsByName("toIndex")
+        console.log(els.length)
+        for (i = 0; i < els.length; i++){
+            console.log("Something");
+            fullConc = "index.html?category-image=" + gup("category-name");
+            els[i].action = fullConc;
+            console.log(els[i]);
+        }
+    </script>
+
+</body>
+
+</html>

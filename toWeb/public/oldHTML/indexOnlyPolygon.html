@@ -1,0 +1,396 @@
+
+
+<html><!--
+   
+     HTML backend to support segmentaton of images 
+     Uses "Canvas 2D" only (works on the latest IE, firefox, opera, safari browsers
+     Original Code written to report coordinates of one polygon and report through amazonturk
+     Modified code written to store multiple polygons
+   
+     Author : Subhransu Maji
+     Email me at : smaji at cs dot berkeley dot edu 
+     Modified by Trishul Nagenalli
+     Email me at : tn74 at duke dot edu
+     
+   --><head><title>AMT : Image Segmentation</title>
+  
+    <style type="text/css">
+    .xlink {cursor:default}
+    .hlink{cursor:help}
+    </style>
+    <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+    <script type="text/javascript">
+      var CANVAS_WIDTH  = 450;
+      var CANVAS_HEIGHT = 450;
+      
+      //global variables for the page
+      var img;
+      var canvas_fix;
+      var ctx;
+      var image_name; 
+      var category_name;
+      
+      //change the base url to point to where the images are located
+      //var base_url = 'http://www.cs.berkeley.edu/~smaji/projects/mturk/interfaces/segmentation/';
+      var base_url = ".";
+      
+      //console.log('Inside imageDraw.html')
+      var fullFile = function(fn) {
+        this.fileName = fn;
+        this.polyx = new Array();
+        this.polyy = new Array();
+        this.ptTrack = new Array();
+      }
+
+      var thisFile = new fullFile();
+
+      //polygon coordinates
+      var x = new Array();
+      var y = new Array();
+      
+      //current location
+      var cx=0;
+      var cy=0;
+      
+      var numpts=0;
+      
+      //tolerance radius
+      var tr=5;
+      
+      //drawing styles
+      var linecolor = "red";
+      var linewidth = 4.0;
+      var pt_size   = 4.0;
+      var pt_color  = "black";
+      
+      // closed or open polygon
+      var polygon_is_closed = false;
+      
+      // index of the point selected
+      var selected_idx = -1;
+      
+      // top level initialization of the canvas
+
+      function reset() {
+        x = [];
+        y = [];
+        numpts = 0;
+        selected_idx = -1;
+        polygon_is_closed = false;
+      }
+      function init_canvas(){
+        img = new Image();
+        var cat_img_name = get_category_image_name();
+        // tokenize the category and image name based on comma
+        var tokens = cat_img_name.split(',');
+        category_name = tokens[0];
+        image_name    = tokens[1];
+
+              //construct the image source from the url parameters 
+        img.src = base_url + '/images/' + category_name + '/' + image_name;
+        thisFile.fileName = category_name+"/"+image_name; //Trishul
+        canvas_fix = document.getElementById("segmentation_canvas");
+        ctx = canvas_fix.getContext("2d");
+        canvas_fix.onmousemove = mousemove_canvas;
+        canvas_fix.onmousedown = mousedown_canvas;
+        canvas_fix.onmouseup   = mouseup_canvas;
+        img.onload = draw_image;
+        draw_canvas();
+      }
+      // draw canvas
+      function draw_canvas(){
+        //draw the image
+        ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+        draw_image();       
+        for (count = 0; count < thisFile.ptTrack.length; count++) { 
+          //console.log(thisFile.ptTrack.length);
+          polygon_is_closed = true;
+          //console.log(thisFile.polyx[count] + " " + thisFile.polyy[count] + " " + thisFile.ptTrack[count])
+          draw_polygon(thisFile.polyx[count],thisFile.polyy[count],thisFile.ptTrack[count]);
+          //draw_polygon([50, 100, 150, 100],[60 ,68, 150, 290],4);
+          polygon_is_closed = false;
+        }
+        draw_polygon(x,y,numpts)
+        
+      }
+      
+      // fix this - wait to draw the image (see if this really works)
+      function draw_image(){
+        ctx.drawImage(img,0,0,CANVAS_WIDTH, CANVAS_HEIGHT);
+      }
+      
+      // reset the annotation
+      function reset_annotation(){
+        selected_idx = -1;
+        polygon_is_closed = false;
+        x = new Array();
+        y = new Array();
+        numpts = 0;
+      }
+      // true if the point is close to the start
+      function is_close_to_start(){
+        if(numpts > 0){
+          var d2 = (cx-x[0])*(cx-x[0]) + (cy-y[0])*(cy-y[0]);
+          return d2 < tr*tr;
+        }else{
+          return false;
+        }
+      }
+      // returns the index of the point close to the current one (within tr)
+      function get_closest_point_idx(){
+        var idx = -1;
+        var min_dist = 100000000;
+        for(var i=0;i<numpts;i++){
+          var d2 = (cx-x[i])*(cx-x[i]) + (cy-y[i])*(cy-y[i]);
+          if(d2 < min_dist){
+            min_dist = d2;
+            idx = i;
+          }
+        }
+        if(min_dist < tr*tr)
+          return idx;
+        else
+          return -1;
+      }
+      
+      // draw the current point
+      function draw_current_point(r){
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(cx-r,cy-r,2*r,2*r);
+      }
+      
+      // draw the polygon 
+      function draw_polygon(x, y, numpts){
+        ctx.strokeStyle = linecolor;
+        ctx.lineWidth = linewidth;
+        for(i = 0; i < numpts-1; i++){
+          ctx.beginPath();
+          ctx.moveTo(x[i],y[i]);
+          ctx.lineTo(x[i+1],y[i+1]);
+          ctx.stroke();
+          
+        }
+        for(i = 0; i < numpts; i++){
+          ctx.fillRect(x[i]-pt_size,y[i]-pt_size,2*pt_size,2*pt_size);
+        }
+        if(numpts > 0){
+          if(polygon_is_closed){
+            ctx.beginPath();
+            ctx.moveTo(x[numpts-1],y[numpts-1]);
+            ctx.lineTo(x[0],y[0]); // the current location
+            ctx.stroke();
+          }else{
+            ctx.beginPath();
+            ctx.moveTo(x[numpts-1],y[numpts-1]);
+            ctx.lineTo(cx,cy); // the current location
+            ctx.stroke();
+            if(is_close_to_start())
+              draw_current_point(2*pt_size);
+            else
+              draw_current_point(pt_size);
+          }
+        }
+        
+      }
+                              
+      // GUI input handling
+      function grab_xy(event){
+        var ev = event || window.event;
+        
+        var IE = document.all?true:false;
+        if (IE) { // grab the x-y pos if browser is IE
+          cx = ev.clientX + document.body.scrollLeft;
+          cy = ev.clientY + document.body.scrollTop;
+        }
+        else {  // grab the x-y pos if browser is NS
+          cx = ev.pageX;
+          cy = ev.pageY;
+        }  
+        cx = cx - canvas_fix.offsetLeft;
+        cy = cy - canvas_fix.offsetTop;
+        if (cx < 0){cx = 0;}
+        if (cy < 0){cy = 0;}
+        if (cx > CANVAS_WIDTH) {cx = CANVAS_WIDTH};
+        if (cy > CANVAS_HEIGHT){cy = CANVAS_HEIGHT};
+          
+        return [cx,cy];
+      }
+      function mouseup_canvas(event){
+        //console.log("Mouse up")
+        if(polygon_is_closed){
+          selected_idx = -1;
+        }else{
+          if(is_close_to_start()){
+            //console.log("Mouse up close to start")
+            polygon_is_closed = true;
+            selected_idx = -1;
+            thisFile.polyx.push(x);
+            thisFile.polyy.push(y);
+            thisFile.ptTrack.push(numpts);
+            console.log(Object.values(thisFile));
+            reset();
+          }else{
+            var xy = grab_xy(event) 
+            x[numpts] = xy[0];
+            y[numpts] = xy[1];
+            numpts = numpts + 1;
+            draw_canvas();
+          }
+        }
+      }
+      function mousedown_canvas(event){
+        selected_idx = get_closest_point_idx();
+      
+      }
+      //update the current location of the keypoint
+      function mousemove_canvas(event){
+        var xy = grab_xy(event);
+        cx = xy[0];
+        cy = xy[1];
+        if(polygon_is_closed && selected_idx >= 0){
+          x[selected_idx] = cx;
+          y[selected_idx] = cy;
+          x = [];
+          y = [];
+        }
+        draw_canvas();
+      }
+      
+      //add a point to the list polygon
+      function onclick_canvas(event){
+        //console.log('inside onclick_canvas');
+        if(polygon_is_closed) {
+          //console.log('closed');
+          numpts = 0;
+          x = [];
+          y = [];
+          draw_canvas();
+          return;
+        }
+        //close the polygon
+        if(is_close_to_start()){
+          polygon_is_closed = true;
+          //console.log('close to start')
+        }else{
+          //console.log('adding a point')
+          var xy = grab_xy(event) 
+          x[numpts] = xy[0];
+          y[numpts] = xy[1];
+          numpts = numpts + 1;
+          draw_canvas();
+        }
+      }
+      //keys to reset the annotation
+      function keydown(event) {
+        var key = String.fromCharCode(event.keyCode || event.which);
+        switch (key) {
+            case "R":
+            reset_annotation(); 
+            break;
+        }
+        draw_canvas();
+      }
+      /// functions related to AMT task
+      function gup(name){
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var tmpURL = window.location.href;
+        var results = regex.exec( tmpURL );
+        if( results == null )
+          return "";
+        else
+          return results[1];
+      }
+      //
+      // This method decodes the query parameters that were URL-encoded
+      //
+      function decode(strToDecode)
+      {
+        var encoded = strToDecode;
+        return unescape(encoded.replace(/\+/g,  " "));
+      }
+      // what to submit to AMT server
+      function get_results_string(){
+        var result = category_name + "/" + image_name;
+        for(var i=0;i<thisFile.ptTrack.length;i++){
+          result += "/";
+          result += thisFile.ptTrack[i] + ",";
+          for (var j = 0; j < thisFile.polyx[i].length; j++) {
+            result += thisFile.polyx[i][j] + "," ;
+            result += thisFile.polyy[i][j] + "," ;
+          }
+        }
+        alert(result)
+        return result;
+      }
+      // grab the results and submit to the server
+      function submitResults(){
+        if(!x.length==0){
+          alert("Please close the polygon before submitting.");
+          return;
+        }
+        var results = JSON.stringify(thisFile);
+        document.getElementById('segpoly').value = "Nothing";
+        document.forms["mturk_form"].submit();
+      }
+      
+      function get_category_image_name(){
+        var cat_img_name = gup('category-image');
+        if(cat_img_name == "")
+          cat_img_name = "imgs,slice_NorfolkDSet_1.jpg";
+        return cat_img_name;
+      }
+  </script>
+  <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head>
+  <body onload="init_canvas();" onkeydown="keydown(event)">
+  <div align="center"><h3 style="color:green"> Draw the outline of every building in this picture</h3></div>
+  <!-- <div align="center" style="color:black"> Read  <a href="tutorial/person/index.html" target="_blank" class="hlink"> instructions</a> before you start (<em>press <b>r</b> to reset)</em> </div> -->
+  <div align="center">
+    <table width="420"> 
+      <tbody><tr align="center"><td>
+        <form id="mturk_form" method="POST" action="https://www.mturk.com/mturk/externalSubmit">
+          <input type="hidden" id="assignmentId" name="assignmentId" value="">
+          <input type="hidden" id="segpoly" name="results" value="person,2011_000745_10.jpg,256,157,245,130,263,112,282,83,280,49,272,27,246,10,220,6,199,23,172,47,170,64,168,79,157,99,121,128,101,162,92,222,84,298,98,338,142,388,164,414,166,434,215,431,218,343,216,319,208,314,206,296,212,286,212,275,230,272,287,253,277,246,271,232,276,220,283,211,307,205,325,205,314,199,302,196,293,199,261,230,234,227,226,210,227,182,232,147,239,135">
+          <br>
+          <input id="submitButton" type="button" name="Submit Results" value="Submit Results" onclick="submitResults()">
+        </form>
+      </td></tr>
+    </tbody></table>
+  </div>
+  <div style="text-align:center;" class="xlink"><canvas id="segmentation_canvas" width="450" height="450"></canvas></div>
+    
+  <script type="text/javascript">
+    document.getElementById('assignmentId').value = gup('assignmentId');
+    //
+    // Check if the worker is PREVIEWING the HIT or if they've ACCEPTED the HIT
+    //
+    if (gup('assignmentId') == "ASSIGNMENT_ID_NOT_AVAILABLE")
+    {
+      // If we're previewing, disable the button and give it a helpful message
+      document.getElementById('submitButton').disabled = true;
+      document.getElementById('submitButton').value = "You must ACCEPT the HIT before you can submit the results.";
+    } else {
+      var form = document.getElementById('mturk_form');
+      if (document.referrer && ( document.referrer.indexOf('workersandbox') != -1) ) {
+        form.action = "https://workersandbox.mturk.com/mturk/externalSubmit";
+      }
+    }
+  </script>
+  
+  
+  
+
+</body></html>

@@ -1,5 +1,28 @@
-# Understanding HIT Image Handling
+# The MTurk Annotation Tool
 
+### What is it?
+The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys a website that hosts all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
+
+### What Can You Do With It?:
+You can:
+	* Annotate Objects With Any of the Below Tools:
+		- Polygon
+		- Line 
+		- Point
+		- More If You Code Them (instructions coming soon)
+	* Provide Instructions to Turkers About How To Annotate
+	* Annotate for as many objects as you like in a single image
+	* Annotate As Many Images as you Like
+	* Specify how many Turkers annotate the same image
+	* Specify how many images a single Turkers sees
+	* Aspects of HITs including:
+		- Reward for Each HIT
+		- Location of Turkers
+		- Custom Qualifications
+		- Anything that can be controlled with Amazon Boto API
+
+
+#### Code coming soon!
 ### Dependencies (Tested With in Parenthesis):
 - Python 3.x (3.6)
 - pillow (Python Imaging Library/PIL) (4.1.1)

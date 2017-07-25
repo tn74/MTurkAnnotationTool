@@ -1,0 +1,580 @@
+
+
+<html><!-- 
+   
+     HTML backend to support segmentaton of images 
+     Uses "Canvas 2D" only (works on the latest IE, firefox, opera, safari browsers
+     Original Code written to report coordinates of one polygon and report through amazonturk
+     Modified code written to store multiple polygons
+   
+     Author : Subhransu Maji
+     Email me at : smaji at cs dot berkeley dot edu 
+     Modified by Trishul Nagenalli
+     Email me at : tn74 at duke dot edu
+     
+   -->
+   <head>
+     <title>AMT : Image Segmentation</title>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+
+      <title>Blog Home - Start Bootstrap Template</title>
+
+      <!-- Bootstrap Core CSS -->
+      <link href="css/bootstrap.min.css" rel="stylesheet">
+
+      <!-- Custom CSS -->
+      <link href="css/blog-home.css" rel="stylesheet">
+    
+      <style type="text/css">
+      .xlink {cursor:default}
+      .hlink{cursor:help}
+      </style>
+    <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+    <script type="text/javascript">
+      var CANVAS_WIDTH  = 1000;
+      var CANVAS_HEIGHT = 1000;
+      
+      //global variables for the page
+      var img;
+      var canvas_fix;
+      var ctx;
+      var image_name; 
+      var category_name;
+      var table;
+      var ANNTYPE;
+      
+      //change the base url to point to where the images are located
+      //var base_url = 'http://www.cs.berkeley.edu/~smaji/projects/mturk/interfaces/segmentation/';
+      var base_url = "../";
+      
+      //console.log('Inside imageDraw.html')
+      var fullFile = function(fn) {
+        this.fileName = fn;
+        this.poly = [new Array(), new Array()];
+        this.lines = [new Array(), new Array()];
+        this.points = [new Array(), new Array()];
+      }
+
+      var thisFile = new fullFile();
+
+      //polygon coordinates
+      var x = new Array();
+      var y = new Array();
+      
+      //current location
+      var cx=0;
+      var cy=0;
+      
+      var numpts=0;
+      
+      //tolerance radius
+      var tr=5;
+      
+      //drawing styles
+      var polyColor = ['purple', 'blue'];
+      var lineColor = ['orange', 'green'];
+      var currentColor = ['cyan', 'red'];
+      var linecolor = "red";
+      var linewidth = 4.0;
+      var pt_size   = 4.0;
+      var pt_color  = "black";
+      
+      // index of the point selected
+      // var selected_idx = -1;
+      
+      // top level initialization of the canvas
+
+      function init_canvas(){
+        img = new Image();
+        var cat_img_name = get_category_image_name();
+        // tokenize the category and image name based on comma
+        var tokens = cat_img_name.split(',');
+        category_name = tokens[0];
+        image_name    = tokens[1];
+
+        //construct the image source from the url parameters 
+        img.src = base_url + '/' + category_name + '/' + image_name;
+        thisFile.fileName = category_name+"/"+image_name; //Trishul
+        canvas_fix = document.getElementById("segmentation_canvas");
+        canvas_fix.height = CANVAS_HEIGHT;
+        canvas_fix.width = CANVAS_WIDTH;
+        table = document.getElementById("tbl")
+        document.getElementById("instructions").action = "instructions.html?category-name="+cat_img_name;
+        ctx = canvas_fix.getContext("2d");
+        img.onload = draw_image;
+        loadJSONFile()
+        draw_canvas();
+      }
+
+      function loadJSONFile() {
+        
+      }
+      // draw canvas
+      function draw_canvas(){
+        //draw the image
+        ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+        draw_image();       
+        for (count = 0; count < thisFile.poly[0].length; count++) { 
+          draw_polygon(thisFile.poly[0][count],thisFile.poly[1][count]);
+        }
+        for (count = 0; count < thisFile.lines[0].length; count++) { 
+          draw_line(thisFile.lines[0][count],thisFile.lines[1][count]);
+        }
+        draw_points();
+        draw_current()
+        
+      }
+      
+      // fix this - wait to draw the image (see if this really works)
+      function draw_image(){
+        ctx.drawImage(img,0,0,CANVAS_WIDTH, CANVAS_HEIGHT);
+      }
+
+      // draw the current point
+      function draw_current_point(r){
+        ctx.fillRect(cx-r,cy-r,2*r,2*r);
+      }
+      
+      function draw_points() {
+        lx = thisFile.points[0];
+        ly = thisFile.points[1];
+        ctx.fillStyle = "hotPink"
+        for (i = 0; i < thisFile.points[0].length; i++){
+           ctx.fillRect(lx[i]-5, ly[i]-5, 10, 10);
+        }
+      }
+      function draw_line(x, y){
+        tp = x.length;
+        ctx.strokeStyle = lineColor[0];
+        ctx.fillStyle = lineColor[1];
+        ctx.lineWidth = linewidth;
+        for(i = 0; i < tp-1; i++){
+          ctx.beginPath();
+          ctx.moveTo(x[i],y[i]);
+          ctx.lineTo(x[i+1],y[i+1]);
+          ctx.stroke();
+        }
+        ctx.stroke();
+        for(i = 0; i < tp; i++){
+          ctx.fillRect(x[i]-pt_size,y[i]-pt_size,2*pt_size,2*pt_size);
+        }
+      }
+
+      // draw a polygon on top of canvas
+      function draw_polygon(x, y){
+        tp = x.length;
+        ctx.strokeStyle = polyColor[0];
+        ctx.fillStyle = polyColor[1];
+        ctx.lineWidth = linewidth;
+        for(i = 0; i < tp-1; i++){
+          ctx.beginPath();
+          ctx.moveTo(x[i],y[i]);
+          ctx.lineTo(x[i+1],y[i+1]);
+          ctx.stroke();
+        }
+        ctx.lineTo(x[0],y[0]);
+        ctx.stroke();
+        for(i = 0; i < tp; i++){
+          ctx.fillRect(x[i]-pt_size,y[i]-pt_size,2*pt_size,2*pt_size);
+        }
+      }
+
+      // draw the series of points the person is working on right now, be it polygon or line
+      function draw_current() {
+        if(x.length > 0){
+          ctx.strokeStyle = currentColor[0];
+          ctx.fillStyle = currentColor[1];
+          ctx.lineWidth = linewidth;
+          ctx.beginPath();
+          for(i = 0; i < x.length-1; i++){
+            ctx.moveTo(x[i],y[i]);
+            ctx.lineTo(x[i+1],y[i+1]);
+            ctx.stroke();
+          }
+
+          ctx.moveTo(x[numpts-1],y[numpts-1]);
+          ctx.lineTo(cx,cy); // the current location
+          ctx.stroke();
+          for(i = 0; i < numpts; i++){
+            ctx.fillRect(x[i]-pt_size,y[i]-pt_size,2*pt_size,2*pt_size);
+          }
+          if(is_close_to_start())
+            draw_current_point(2*pt_size);
+          else
+            draw_current_point(pt_size);
+        }
+      }
+
+      // Reset current annotation
+      function reset() {
+        x = new Array();
+        y = new Array();
+        numpts = 0;
+        enableButtons();
+      }
+
+      //Settings for line or polygon or annotation
+      function setUpLine() {
+        var ANNTYPE = 'line';
+      }
+      function setUpPoly() {
+        var ANNTYPE = 'poly';
+      }
+      function setUpPoint() {
+        var ANNTYPE = 'point'
+      }
+
+      function mouseup_canvas_line(event){
+        disableButtons();
+        var xy = grab_xy(event) 
+        x[numpts] = xy[0];
+        y[numpts] = xy[1];
+        numpts = numpts + 1;
+        draw_canvas();     
+      }
+
+      // handle mouseup event for polygon setting
+      function mouseup_canvas_polygon(event){
+        disableButtons();
+        if(is_close_to_start()){
+          thisFile.poly[0].push(x);
+          thisFile.poly[1].push(y);
+          console.log(Object.values(thisFile));
+          reset();
+        }else{
+          mouseup_canvas_line();
+        }
+      }
+
+      function mouseup_canvas_pt(event){
+        var xy = grab_xy(event);
+        thisFile.points[0].push(xy[0]);
+        thisFile.points[1].push(xy[1]);
+      }
+
+      function mousedown_canvas(event){
+        selected_idx = get_closest_point_idx();
+      
+      }
+      //update the current location of the keypoint
+      function mousemove_canvas(event){
+        var xy = grab_xy(event);
+        cx = xy[0];
+        cy = xy[1];
+        draw_canvas();
+      }
+      
+      //keys to reset the annotation
+      function keydown(event) {
+        var key = String.fromCharCode(event.keyCode || event.which);
+        switch (key) {
+            case "R":
+              reset(); 
+              break;
+
+            case "L":
+              if (document.getElementById("rline").checked==true) {
+                thisFile.lines[0].push(x);
+                thisFile.lines[1].push(y);
+                reset();
+              }
+              break;
+
+            case "Q":
+              thisFile.poly[0].splice(-1);
+              thisFile.poly[1].splice(-1);
+              reset();
+              break;
+
+            case "W":
+              thisFile.lines[0].splice(-1);
+              thisFile.lines[1].splice(-1);
+              reset();
+              break;
+
+            case "E":
+              thisFile.points[0].splice(-1);
+              thisFile.points[1].splice(-1);
+              reset();
+              break;
+        }
+        draw_canvas();
+      }
+
+      function disableButtons(){
+        allButtons = document.getElementsByName('annotateType');
+        for (var i=0; i<allButtons.length;i++){
+          allButtons[i].disabled=true;
+        }
+      }
+
+      function enableButtons() {
+        allButtons = document.getElementsByName('annotateType');
+        for (var i=0; i<allButtons.length;i++){
+          allButtons[i].disabled=false;
+        }
+      }
+
+      // true if the point is close to the start
+      function is_close_to_start(){
+        if(numpts > 0){
+          var d2 = (cx-x[0])*(cx-x[0]) + (cy-y[0])*(cy-y[0]);
+          return d2 < tr*tr;
+        }else{
+          return false;
+        }
+      }
+      // returns the index of the point close to the current one (within tr)
+      function get_closest_point_idx(){
+        var idx = -1;
+        var min_dist = 100000000;
+        for(var i=0;i<numpts;i++){
+          var d2 = (cx-x[i])*(cx-x[i]) + (cy-y[i])*(cy-y[i]);
+          if(d2 < min_dist){
+            min_dist = d2;
+            idx = i;
+          }
+        }
+        if(min_dist < tr*tr)
+          return idx;
+        else
+          return -1;
+      }
+      
+      
+                              
+      // GUI input handling
+      function grab_xy(event){
+        var ev = event || window.event;
+        
+        var IE = document.all?true:false;
+        if (IE) { // grab the x-y pos if browser is IE
+          cx = ev.clientX + document.body.scrollLeft;
+          cy = ev.clientY + document.body.scrollTop;
+        }
+        else {  // grab the x-y pos if browser is NS
+          cx = ev.pageX;
+          cy = ev.pageY;
+        }  
+        cx = cx - canvas_fix.offsetLeft- table.offsetLeft;
+        cy = cy - canvas_fix.offsetTop - table.offsetTop;
+        if (cx < 0){cx = 0;}
+        if (cy < 0){cy = 0;}
+        if (cx > CANVAS_WIDTH) {cx = CANVAS_WIDTH};
+        if (cy > CANVAS_HEIGHT){cy = CANVAS_HEIGHT};
+          
+        return [cx,cy];
+      }
+
+      // functions related to AMT task
+      function gup(name){
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var tmpURL = window.location.href;
+        var results = regex.exec( tmpURL );
+        if( results == null )
+          return "";
+        else
+          return results[1];
+      }
+      //
+      // This method decodes the query parameters that were URL-encoded
+      //
+      function decode(strToDecode)
+      {
+        var encoded = strToDecode;
+        return unescape(encoded.replace(/\+/g,  " "));
+      }
+      // Transform data to be terms of original image coordinates
+      function convertData(){
+        arrx = [thisFile.poly[0], thisFile.lines[0]]
+        arry = [thisFile.poly[1], thisFile.lines[1]]
+        for (i = 0; i < arrx.length; i++) {
+          //console.log("1: " + arrx[i])
+          for (j = 0; j < arrx[i].length; j++)  {
+            //console.log("2: " + arrx[i][j])
+            for (k = 0; k < arrx[i][j].length; k++) {
+              //console.log("3: " + arrx[i][j][k])
+              arrx[i][j][k]  = Math.round(arrx[i][j][k] * img.width / CANVAS_WIDTH);
+             }
+          } 
+        }
+        for (i = 0; i < arry.length; i++) {
+          //console.log("1: " + arrx[i])
+          for (j = 0; j < arry[i].length; j++)  {
+            //console.log("2: " + arrx[i][j])
+            for (k = 0; k < arry[i][j].length; k++) {
+              //console.log("3: " + arrx[i][j][k])
+              arry[i][j][k]  = Math.round(arry[i][j][k] * img.height / CANVAS_HEIGHT);
+             }
+          } 
+        }
+
+        for (i = 0; i < thisFile.points[0].length; i++) {
+          thisFile.points[0][i] = Math.round(thisFile.points[0][i] * img.width / CANVAS_WIDTH);
+          thisFile.points[1][i] = Math.round(thisFile.points[1][i] * img.width / CANVAS_HEIGHT);
+        }
+      }
+      // grab the results and submit to the server
+      function submitResults(){
+        if(!x.length==0){
+          alert("Please close the polygon before submitting.");
+          return;
+        }
+        convertData();
+        var results = JSON.stringify(thisFile);
+        document.getElementById('segpoly').value = results;
+        document.forms["mturk_form"].submit();
+      }
+      
+      function get_category_image_name(){
+        var cat_img_name = gup('category-image');
+        if(cat_img_name == "")
+          cat_img_name = "imToCut,Norfolk_01_training.jpg";
+        return cat_img_name;
+      }
+  </script>
+  <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head>
+  <body onload="init_canvas();" onkeydown="keydown(event)">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" >Duke University Data Plus: Energy Access Team</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+  <div align="center">
+    <table>
+      <tr>
+        <th width = 150> Sample Image </th>
+        <td width = 170 align = "center"> <img src="images/stock/sampleHouse.png" alt="House" height="150" width="150"> </td>
+        <td width = 170 align = "center"> <img src="images/stock/sampleRoad.png" alt="Road" height="150" width="150"> </td>
+        <td width = 170 align = "center"> <img src="images/stock/sampleCar.png" alt="Car" height="150" width="150"> </td>
+        <td rowspan = "3">
+          <table>
+            <tr>
+              <td align = "center" width = 100 > <b> Use Key </b></th>
+              <th width = 400 align = "center"> to complete the following action </th>
+            </tr>
+            <tr>
+              <td align = "center"> R </td>
+              <td > Reset your current annotation</td>
+            </tr>
+            <tr>
+              <td align = "center"> L </td>
+              <td> Finish the line you are building (line-mode only)</td>
+            </tr>
+            <tr>
+              <td align = "center"> Q </td>
+              <td > Remove the last polygon you made</td>
+            </tr>
+            <tr>
+              <td align = "center">  W </td>
+              <td > Remove the last line you made</td>
+            </tr>
+            <tr>
+              <td align = "center"> E </td>
+              <td > Remove the last point you made</td>
+            </tr>
+            <tr>
+            <td></td>
+              <td>
+                <form id = "instructions" name = "toIndex" method="post" action="instructions.html"><br><button type="submit">Full Instructions</button></form>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <th height = 30> Object Name </th>
+        <td align = "center"> House </td>
+        <td align = "center"> Road </td>
+        <td align = "center"> Car </td>
+      </tr>
+      <tr>
+        <th height = 20> Annotation Tool </th>
+        <td align = "center"> Polygon Tool </td>
+        <td align = "center"> Line Tool </td>
+        <td align = "center"> Label Tool </td>
+      </tr>
+    </table>
+
+  </div>
+  <hr>
+  <div style="text-align:center;" class="xlink">
+    <table width = "600" align = "center" id = "tbl">
+      <tr> 
+        <td rowspan = "2"> <canvas id="segmentation_canvas" width="450" height="450"></canvas> </td>
+        <td>
+          <b> Annotation Type </b> 
+          <form action="">
+            <input id = "rpoly" type="radio" name="annotateType" value="polygon" onclick = "setUpPoly()" checked = "checked"> Polygon<br>
+            <input id = "rline" type="radio" name="annotateType" value="line" onclick = "setUpLine()"> Line<br>
+            <input id = "rlabel" type="radio" name="annotateType" value="label" onclick = "setUpPoint()"> Label
+          </form>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form id="mturk_form" method="POST" action="https://www.mturk.com/mturk/externalSubmit">
+            <input type="hidden" id="assignmentId" name="assignmentId" value="">
+            <input type="hidden" id="segpoly" name="results" value="">
+            <br>
+            <input id="submitButton" type="button" name="Submit Results" value="Submit Results" onclick="submitResults()">
+          </form>
+        </td>
+      </tr>
+    </table> 
+  </div>
+  <div align="center">
+    <table width="320"> 
+      <tbody><tr align="center"><td>
+      </td>
+      </tr>
+    </tbody></table>
+  </div>
+  <script type="text/javascript">
+    document.getElementById('assignmentId').value = gup('assignmentId');
+    //
+    // Check if the worker is PREVIEWING the HIT or if they've ACCEPTED the HIT
+    //
+    if (gup('assignmentId') == "ASSIGNMENT_ID_NOT_AVAILABLE")
+    {
+      // If we're previewing, disable the button and give it a helpful message
+      document.getElementById('submitButton').disabled = true;
+      document.getElementById('submitButton').value = "You must ACCEPT the HIT before you can submit the results.";
+    } else {
+      var form = document.getElementById('mturk_form');
+      if (document.referrer && ( document.referrer.indexOf('workersandbox') != -1) ) {
+        form.action = "https://workersandbox.mturk.com/mturk/externalSubmit";
+      }
+    }
+  </script>
+  
+  
+  
+
+</body></html>

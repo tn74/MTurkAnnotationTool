@@ -1,0 +1,135 @@
+
+
+<html><!-- 
+   
+     HTML backend to support segmentaton of images 
+     Uses "Canvas 2D" only (works on the latest IE, firefox, opera, safari browsers
+     Original Code written to report coordinates of one polygon and report through amazonturk
+     Modified code written to store multiple polygons, lines, and points
+   
+     Author : Subhransu Maji
+     Email me at : smaji at cs dot berkeley dot edu 
+     Extensively Modified by Trishul Nagenalli
+     Email me at : tn74 at duke dot edu
+     
+   -->
+   <head>
+    <title>AMT : Image Segmentation</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content=""> 
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/blog-home.css" rel="stylesheet"> <!-- Acts like blog page -->
+    <link href="css/custom.css" rel="stylesheet">
+  
+    <style type="text/css">.xlink {cursor:default} .hlink{cursor:help}</style>
+    <!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+    <script src = 'js/jquery.js'></script>
+    <script src = 'js/neededJSONS.json'></script>
+    
+    <script src = "js/displays.js"></script> 
+    <script src = 'js/annotationCode.js'></script>
+    
+
+    <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+      .en-markup-crop-options {
+          top: 18px !important;
+          left: 50% !important;
+          margin-left: -100px !important;
+          width: 200px !important;
+          border: 2px rgba(255,255,255,.38) solid !important;
+          border-radius: 4px !important;
+      }
+      .en-markup-crop-options div div:first-of-type {
+          margin-left: 0px !important;
+      }
+    </style>
+
+  </head>
+
+  <body onload="init_canvas();" onkeydown="keydown(event)">
+    
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand"> Duke University Data Plus: Energy Access Team</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+  <div align="center">
+    <table>
+      <tr id = "sampleImages" height=170>
+        <td rowspan = "3">
+          <table id = "instructionsTable">
+            <tr>
+            <td></td>
+              <td>
+                <form id = "instructions" name = "toIndex" target="_blank" method="post" action="instructions.html"><br><button type="submit">Full Instructions</button></form>
+              </td>
+            </tr>
+            <tr> 
+              <td width = 100 colspan = '2'> Please click on object names to your left if you are confused about classifying a particular object. Please remember there may be no instances of any object in this image! </td> 
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr></tr>
+      <tr id = "annNames"></tr>
+      <tr id = "polyLabels"></tr>
+    </table>
+
+  </div>
+  <hr>
+  <div style="text-align:center;" class="xlink">
+    <table width = "720" align = "center" id = "tbl">
+      <tr> 
+        <td rowspan = "2"> <canvas id="segmentation_canvas" width="420" height="420"></canvas> </td>
+        <td colspan = "4" >
+          <center> <b> Annotation Type </b> </center>
+          <table id = "RadioButtonTable">
+          </table>  
+        </td>
+      </tr>
+      <tr>
+        <td colspan = "4">
+          <form id="mturk_form" method="POST" action="https://www.mturk.com/mturk/externalSubmit">
+            <input type="hidden" id="assignmentId" name="assignmentId" value="">
+            <input type="hidden" id="segpoly" name="results" value="">
+            <br>
+            <center> <input id="submitButton" type="button" name="Submit Results" value="Submit Results" onclick="submitResults()"> </center>
+          </form>
+        </td>
+      </tr>
+    </table> 
+  </div>
+  
+  <script type="text/javascript">
+    document.getElementById('assignmentId').value = gup('assignmentId'); 
+    //
+    // Check if the worker is PREVIEWING the HIT or if they've ACCEPTED the HIT
+    //
+    if (gup('assignmentId') == "ASSIGNMENT_ID_NOT_AVAILABLE")
+    {
+      // If we're previewing, disable the button and give it a helpful message
+      document.getElementById('submitButton').disabled = true;
+      document.getElementById('submitButton').value = "You must ACCEPT the HIT before you can submit the results.";
+    } else {
+      var form = document.getElementById('mturk_form');
+      if (document.referrer && ( document.referrer.indexOf('workersandbox') != -1) ) {
+        form.action = "https://workersandbox.mturk.com/mturk/externalSubmit";
+      }
+    }
+  </script>
+  <script src = "js/displays.js"></script>
+</body></html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Finding Buildings</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/blog-home.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand"> Duke University Data Plus: Energy Access Team</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+
+        <div id = "a" class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-12">
+                <table>
+                    <tr>
+                        <td width = 250>
+                            <h1>
+                                Building
+                            </h1>
+                        </td>
+                        <td>
+                            <form name = "toIndex" method="post" action="index.html"><br><button type="submit" style = ""> Back </button></form>
+                        </td>
+                    </tr>
+                </table> 
+
+                <hr>
+
+                <!-- Identifying-->
+                <h3> Frequently Asked Questions </h3>
+                <ol>
+                    <li> What if a building is on the edge of this image? </li>
+                        <ul> Draw a polygon around the parts that you can see. </ul>
+                    <li> What do we do with small roofed structures like shacks or outhouses?</li>
+                        <ul> Annotate them anyway! </ul>
+                    <li> If two buildings seem connected by a narrow pathway, should I annotate them with two separate polygons or under one polygon? </li>
+                        <ul> Either way is fine. Please make sure that the connection between the two buildings is inside the polygon however. </ul>
+
+                </ol>
+
+
+                <form id = "Annotate" name = "toIndex" method="post" action="index.html"><br><button type="submit">Annotate</button></form>
+
+                
+            </div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Electricity Access Group of Duke Data+</p>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Passing on iamge parameters to index.html page -->
+    <script type = "text/javascript">
+        function gup(name){
+            var regexS = "[\\?&]"+name+"=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var tmpURL = window.location.href;
+            var results = regex.exec( tmpURL );
+            console.log(results);
+            if( results == null )
+              return "";
+            else
+              return results[1];
+        }
+
+        els = document.getElementsByName("toIndex")
+        console.log(els.length)
+        for (i = 0; i < els.length; i++){
+            console.log("Something");
+            fullConc = "index.html?category-image=" + gup("category-name");
+            els[i].action = fullConc;
+            console.log(els[i]);
+        }
+    </script>
+
+</body>
+
+</html>

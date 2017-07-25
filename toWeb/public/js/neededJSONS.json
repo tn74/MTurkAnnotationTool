@@ -1,0 +1,3 @@
+fileTypes = '[{"road":"line","building":"polygon","powerplant":"polygon","lampPost":"point","car":"point","tree":"polygon","waterTower":"polygon","irrigatedField":"polygon","solarArray":"polygon"}]'
+colors = '{"dotcolors":["mediumblue","greenyellow","brown","gold","lightpink"],"linecolors":["dodgerblue","green","burlyWood","goldenrod","lightsalmon"]}'
+quitString = 'QWERT'
