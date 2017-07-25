@@ -20,8 +20,25 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
   - Custom Qualifications
   - Anything that can be controlled with Amazon Boto API
 
+### Installation:
+1. Clone this repository and install all dependencies with pip
 
-#### Code coming soon!
+2. Get the Site deployed on Firebase
+	1. Make a Goolge Account if you do not have one (gmail will do)
+	2. Install Firebase CLI (See [Link](https://firebase.google.com/docs/cli/))
+	3. Login to Firebase [Console](https://console.firebase.google.com/)
+	4. Create a Firebase Project and remember what you name it
+	5. Open terminal and move into the MTurkAnnotationTool/toWeb directory
+	6. Enter the following commands:
+		```bash
+		firebase login
+		firebase init 
+		```
+		Select 'Hosting' when asked which Firebase CLI feature you would like to setup
+		```bash
+		firebase use --add [ProjectName]
+		```
+		where [ProjectName] is the name of the project you created in step 4
 ### Dependencies (Tested With in Parenthesis):
 - Python 3.x (3.6)
 - pillow (Python Imaging Library/PIL) (4.1.1)
