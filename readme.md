@@ -4,22 +4,21 @@
 The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
 
 ### What Can You Do With It?:
-You can:
-	- Annotate Objects With Any of the Below Tools:
-		- Polygon
-		- Line 
-		- Point
-		- More If You Code Them (instructions coming soon)
-	- Provide Instructions to Turkers For Each Object to be Annotated
-	- Annotate for as many objects as you like in a single image
-	- Specify how many Turkers annotate the same image
-	- Specify how many images a single Turkers sees
-	- Annotate All Images Simultaneously
-	- Aspects of HITs including:
-		- Reward for Each HIT
-		- Location of Turkers
-		- Custom Qualifications
-		- Anything that can be controlled with Amazon Boto API
+- Annotate Objects With Any of the Below Tools:
+ 	- Polygon
+ 	- Line 
+    - Point
+    - More If You Code Them (instructions coming soon)
+- Provide Instructions to Turkers For Each Object to be Annotated
+- Annotate for as many objects as you like in a single image
+- Specify how many Turkers annotate the same image
+- Specify how many images a single Turkers sees
+- Annotate All Images Simultaneously
+- Aspects of HITs including:
+  - Reward for Each HIT
+  - Location of Turkers
+  - Custom Qualifications
+  - Anything that can be controlled with Amazon Boto API
 
 
 #### Code coming soon!
