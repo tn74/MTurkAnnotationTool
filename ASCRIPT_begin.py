@@ -25,7 +25,8 @@ processingOneLargeImage -	True if this folder contains hits for a large image th
 imageToCut				-	Name of large image that needs to be cut if processingOneLargeImage is True. Does not matter 
 							if processingOneLargeImage is False
 
-folder					-	Name of folder inside toWeb/public/images that contains the images to be annotated
+folder					-	Name of folder inside toWeb/public/images that contains the images to be annotated. It must be 
+							the name of the image that was cut up without the file extension of processingOneLargeImage is True
 
 serverType				-	'developer' if you are testing and want to send hits to developer sandbox
 							'production' if you want to post online for real people to annotate
@@ -34,7 +35,7 @@ serverType				-	'developer' if you are testing and want to send hits to develope
 imagesPerPerson			-	The number of images a single Turk User would be asked to annotate in one HIT Assignemnt
 
 annotations				-	Array of things you would like the Turk Users to annotate in each image. 
-							For Each Annotaiion You Add, You Must (example: for a building):
+							For Each Annotaiion You Add, You must do the following (example for a building in parenthesis):
 								Create a helpfile in toWeb/Public/helper with name [object name].html  (toWeb/public/helper/building.html)
 								Provide a Sample Annotated Image called [object name].png in 
 									toWeb/public/images/sample (toWeb/public/images/sample/building.png)

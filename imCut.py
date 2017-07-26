@@ -10,7 +10,7 @@ def cut(inFile):
 	upper = 0
 	left = 0 
 	count = 0
-	length  = 1000
+	length  = 400
 	overlap = 100
 
 	imagename = 'imToCut/'+inFile	 # INSERT THE IMAGE NAME THAT YOU WANT TO CUT HERE

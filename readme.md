@@ -4,14 +4,14 @@
 The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
 
 ### What Can You Do With It?:
-- Annotate As Many Images As You Like Simultaneously
-- Annotate Objects Inside Images With Any of the Below Tools:
+- Annotate as many images as you like simultaneously
+- Annotate objects insideimages with any of the below tools:
  	- Polygon
  	- Line 
     - Point
     - More If You Code Them (instructions coming soon)
 - Annotate for as many objects as you like in a single image
-- Provide Instructions to Turkers For Each Object to be Annotated
+- Provide instructions to Turkers for each object to be annotated
 - Specify how many Turkers annotate the same image
 - Specify how many images a single Turker sees
 - Aspects of HITs including:
@@ -20,6 +20,15 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
   - Custom Qualifications
   - Anything that can be controlled with Amazon Boto API
 - Approve or Reject Turker's Work 
+
+### How Do I Use It?
+1. Follow the installation procedures outlined below
+2. There are two ways you can use the program as given with ASCRIPT_begin.py
+	1. You can annotate a collection of independent and unconnected images
+	2. You can annotate a very large image that can be cut into custom size squares before being passed on to Turkers
+		- This method was developed to help annotate satellite images covering large swathes of territory for specific features
+Open ASCRIPT_begin.py and read the variable information at the head of the file for more information
+
 
 ### Dependencies (Tested With in Parenthesis):
 - Python 3.x (3.6)
@@ -42,7 +51,7 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 		```bash
 		firebase init 
 		```
-		Select 'Hosting' when asked which Firebase CLI feature you would like to setup
+		Select 'Hosting' when asked which Firebase CLI feature you would like to setup, and select the project name from step 4 as your default project
 		```bash
 		firebase use --add [ProjectName]
 		```
@@ -54,12 +63,42 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 		```
 3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#setup-aws-account). When making an IAM user, save your AWS Access and Secret Access keys somewhere safe
 
-4. Place your AWS Access and Secret Access Keys inside the config.ini file replacing the lines:
+4. Place your preferred username, AWS Access, and AWS Secret Access Keys inside the config.ini file replacing the lines:
 	```
 	[Username]
 	awskey = Your AWS Key Here
 	awssakey = Your AWS Secret Access Key
 	```
+5. Test If Installation Was Sucessful By Running ASCRIPT_begin.py, visiting one of the links printed into terminal, completing a HIT, and finally running ASCRIPT_finish.py
+
+### What does this repo ship with?
+The program is configured to run immediately with example Object/Annotation Type Pairs, Sample Images, and Helpfiles for the following:
+	- Car: Point
+	- Building: Polygon
+	- Road: Line
+	- Powerplant: Polygon
+	- Lamp Post: Point
+	- Tree: Polygon
+Feel free to use their existing helpfiles as templates when making your own or make your own fomr scratch!
+
+***
+
+### How Does It Work?
+Coming Soon
+
+### Adding Functionality
+
+#### Adding Another Object to Annotate
+For every object (let's call it _obj_) you would like to annotate, you must do the following:
+1. Provide a sample called obj.png inside toWeb/public/images/sample
+2. Provide a help file written in HTML inside toWeb/public/helper
+3. Add an entry into fileTypes indicating the tool used to annotate the object in toWeb/public/js/neededJSONS.json
+	If obj were to be annotated with a line,
+		fileTypes = '[{"road":"line","powerplant":"polygon"}]' 
+	would become
+		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
+	The program ships with support for "polygon", "line", and "point" annotation types
+
 
 ### Thanks To
 Developemnt Team:
@@ -71,7 +110,7 @@ Developemnt Team:
 - Trishul Nagenalli
 
 Borrowed Code:
-- Dr. Subhransu Maji - Used his [Starter Code](http://people.cs.umass.edu/~smaji/projects/mturk/index.html) for Annotating Polygons 
+- Dr. Subhransu Maji - Used some of his [Starter Code](http://people.cs.umass.edu/~smaji/projects/mturk/index.html) for Annotating Polygons 
 
 
 
