@@ -79,12 +79,19 @@ The program is configured to run immediately with example Object/Annotation Type
 - Powerplant: Polygon
 - Lamp Post: Point
 - Tree: Polygon
-- Feel free to use their existing helpfiles as templates when making your own or make your own from scratch!
+Feel free to use the existing helpfiles as templates when making your own or make your own from scratch!
 
 ***
 
 ### How Does It Work?
-Coming Soon
+
+##### Publishing Hits
+1. Place images you would like to annotate in a folder inside ```toWeb/images/``` 
+2. Firebase deploys your site
+2. ```publish``` a function inside ```pubfolderhits.py``` is called and publishes a HIT to MTurk using your IAM user's access key. 
+	- ```pubfolderhits.py``` contains all the functions relevant to creating hits. If you want to change HIT parameters like:
+		- Compensation for HIT
+		- 
 
 ### Adding Functionality
 
