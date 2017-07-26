@@ -79,7 +79,7 @@ The program is configured to run immediately with example Object/Annotation Type
 - Powerplant: Polygon
 - Lamp Post: Point
 - Tree: Polygon
-Feel free to use their existing helpfiles as templates when making your own or make your own fomr scratch!
+- Feel free to use their existing helpfiles as templates when making your own or make your own fomr scratch!
 
 ***
 
@@ -88,15 +88,19 @@ Coming Soon
 
 ### Adding Functionality
 
-#### Adding Another Object to Annotate
+#### Adding Ant Object to Annotate
 For every object (let's call it _obj_) you would like to annotate, you must do the following:
 1. Provide a sample called obj.png inside toWeb/public/images/sample
 2. Provide a help file written in HTML inside toWeb/public/helper
 3. Add an entry into fileTypes indicating the tool used to annotate the object in toWeb/public/js/neededJSONS.json
 	- If obj were to be annotated with a line,
-		```fileTypes = '[{"road":"line","powerplant":"polygon"}]' ```
+		```
+		fileTypes = '[{"road":"line","powerplant":"polygon"}]' 
+		```
 	- would become
-		```-fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'```
+		```
+		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
+		```
 	- The program ships with support for "polygon", "line", and "point" annotation types
 
 
