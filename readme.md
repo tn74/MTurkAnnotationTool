@@ -4,21 +4,22 @@
 The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
 
 ### What Can You Do With It?:
-- Annotate Objects With Any of the Below Tools:
+- Annotate As Many Images As You Like Simultaneously
+- Annotate Objects Inside Images With Any of the Below Tools:
  	- Polygon
  	- Line 
     - Point
     - More If You Code Them (instructions coming soon)
-- Provide Instructions to Turkers For Each Object to be Annotated
 - Annotate for as many objects as you like in a single image
+- Provide Instructions to Turkers For Each Object to be Annotated
 - Specify how many Turkers annotate the same image
-- Specify how many images a single Turkers sees
-- Annotate All Images Simultaneously
+- Specify how many images a single Turker sees
 - Aspects of HITs including:
   - Reward for Each HIT
   - Location of Turkers
   - Custom Qualifications
   - Anything that can be controlled with Amazon Boto API
+- Approve or Reject Turker's Work 
 
 ### Dependencies (Tested With in Parenthesis):
 - Python 3.x (3.6)
@@ -51,7 +52,7 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 		[SetUp]
 		firebaseSubdomain = amtannotate
 		```
-3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#accountlinking). When making an IAM user save your AWS Access and Secret Access keys somewhere safe
+3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#setup-aws-account). When making an IAM user, save your AWS Access and Secret Access keys somewhere safe
 
 4. Place your AWS Access and Secret Access Keys inside the config.ini file replacing the lines:
 	```
@@ -61,14 +62,15 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 	```
 
 ### Thanks To
-For Developemnt Assitance and Mentorship:
+Developemnt Team:
 - Dr. Kyle Bradbury
 - Ben Brigman
 - Boning Li
 - Gouttham Chandrasekar
 - Shamikh Hossain
+- Trishul Nagenalli
 
-For Code:
+Borrowed Code:
 - Dr. Subhransu Maji - Used his [Starter Code](http://people.cs.umass.edu/~smaji/projects/mturk/index.html) for Annotating Polygons 
 
 
