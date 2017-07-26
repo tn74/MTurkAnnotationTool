@@ -45,7 +45,7 @@ Open ASCRIPT_begin.py and read the variable information at the head of the file 
 	1. Make a Goolge Account if you do not have one (gmail will do)
 	2. Install Firebase CLI (See [Link](https://firebase.google.com/docs/cli/)). Complete at least through ```firebase login```
 	3. Login to Firebase [Console](https://console.firebase.google.com/)
-	4. Create a Firebase Project and remember what you name it
+	4. Create a Firebase Project
 	5. Open terminal and move into the MTurkAnnotationTool/toWeb directory
 	6. Enter the following commands:
 		```bash
@@ -53,9 +53,9 @@ Open ASCRIPT_begin.py and read the variable information at the head of the file 
 		```
 		Select 'Hosting' when asked which Firebase CLI feature you would like to setup, and select the project name from step 4 as your default project
 		```bash
-		firebase use --add [ProjectName]
+		firebase use --add [ProjectId]
 		```
-		where [ProjectName] is the name of the project you created in step iv
+		where [ProjectId] is the name of the project you created in step iv
 	7. Open config.ini and put the firebase subdomain name in the file under ```[Set Up]``` (Example Below)
 		```
 		[SetUp]
