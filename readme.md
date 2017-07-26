@@ -125,7 +125,7 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 
 
 #### Verifying annotations: Using the Hitchecker
-You will often want to ensure the validity and accuracy of your annotation dataset by filtering out the occasional human errors, accidental or systematic, made by the Turk users who complete the HITs. To do this, our platform includes a script that launches a basic GUI interface that generates labeled images with the user-submitted annotations and allows you to either Accept or Reject the annotation data for use. 
+You will often want to ensure the validity and accuracy of your annotation dataset by filtering out the occasional human errors, accidental or systematic, made by the Turk users who complete the HITs. To do this, our platform includes a script that launches a basic GUI interface that generates labeled images with the user-submitted annotations and allows you to either Accept or Reject the annotation data for use. The GUI runs on Tkinter, which is part of the standard Python library and thus should run on your machine without specific pip installation. 
 
 - When you click the 'Accept' button, the user who completed the HIT/set of HITs will be compensated. 
 - When you click reject, a message ('Sorry, your annotations look incomplete!') is sent to the Turk user who annotated incorrectly. This message can be modified by editing the 'RequesterFeedback' variable in usefulBotoFunctions.py. 
