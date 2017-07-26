@@ -60,7 +60,6 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 	awssakey = Your AWS Secret Access Key
 	```
 
-
 ### Thanks To
 For Developemnt Assitance and Mentorship:
 - Dr. Kyle Bradbury
