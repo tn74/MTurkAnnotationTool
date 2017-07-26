@@ -142,7 +142,7 @@ After you close the GUI, the terminal will summarize the accepted and rejected w
 
 
 ### Thanks To
-Developemnt Team:
+Development Team:
 - Dr. Kyle Bradbury
 - Ben Brigman
 - Boning Li
