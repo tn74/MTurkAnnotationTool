@@ -47,27 +47,36 @@ Open ASCRIPT_begin.py and read the variable information at the head of the file 
 	3. Login to Firebase [Console](https://console.firebase.google.com/)
 	4. Create a Firebase Project
 	5. Open terminal and move into the MTurkAnnotationTool/toWeb directory
-	6. Enter the following commands:
+	6. Run ```bash firebase list``` in terminal and see the project-id for the project that you just chose
+	7. Enter the following commands:
 		```bash
 		firebase init 
 		```
 		Select 'Hosting' when asked which Firebase CLI feature you would like to setup, and select the project name from step 4 as your default project
 		```bash
 		firebase use --add [ProjectId]
+		firebase deploy
 		```
 		where [ProjectId] is the name of the project you created in step iv
-	7. Open config.ini and put the firebase subdomain name in the file under ```[Set Up]``` (Example Below)
+	8. Open config.ini and put the firebase project-id in the file under ```[SetUp]``` (Example for id "amtannotate" Below)
 		```
 		[SetUp]
 		firebaseSubdomain = amtannotate
 		```
-3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#setup-aws-account). When making an IAM user, save your AWS Access and Secret Access keys somewhere safe
+3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#setup-aws-account). Make sure you complete all steps through Step 5 (setting up the developer sandbox). When making an IAM user, save your AWS Access and Secret Access keys somewhere safe
 
-4. Place your preferred username, AWS Access, and AWS Secret Access Keys inside the config.ini file replacing the lines:
+4. Place your preferred username (doesn't matter what it is so long as you are consistent in your code), AWS Access, and AWS Secret Access Keys inside the config.ini For example, if you wanted to create access for a user named 'Student' with AWS Key 'ABCD' and AWS Secret Access Key '1234'
 	```
 	[Username]
 	awskey = Your AWS Key Here
 	awssakey = Your AWS Secret Access Key
+	```
+	would become
+	```
+	[Student]
+	awskey = ABCD
+	awssakey = 1234
+
 	```
 5. Test If Installation Was Sucessful By Running ASCRIPT_begin.py, visiting one of the links printed into terminal, completing a HIT, and finally running ASCRIPT_finish.py
 
