@@ -5,8 +5,7 @@ import configparser
 import sys
 import json
 from datetime import datetime
-import sys
-sys.path.append("../")
+
 
 def createSandboxClient(user):
 	"""

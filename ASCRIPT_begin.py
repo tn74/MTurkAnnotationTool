@@ -47,19 +47,18 @@ annotations				-	Array of things you would like the Turk Users to annotate in ea
 
 Set the variables below before you run the script
 """
-processingOneLargeImage = False
+processingOneLargeImage = True
 imageToCut = 'Norfolk_01_training.tif'
-folder = '030740_nw' 
+folder = 'Norfolk_01_training' # Must be name of image above without file extension if processOneLargeImage is True
 
-user = 'Bradbury'
+user = 'trishul3' # Name of user inside config file
 serverType = 'developer'				
-imagesPerPerson = 5 
-annotations = ['solarArray']
+imagesPerPerson = 2 
+annotations = ['building','road']
 
 
 
-if (processingLargeSatelliteImage):
-	imgToCut = '030740_nw.tif'
+if (processingOneLargeImage):
 	iname = imgToCut.split('.')[0]
 	if not os.path.exists('toWeb/public/images/'+iname):
 		cut(imageToCut)
@@ -68,7 +67,10 @@ def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
     proc_stdout = process.communicate()[0].strip()
     print (proc_stdout)
-subprocess_cmd('cd toWeb; cd public; firebase deploy') # Puts toWeb folder online at firebase
+subprocess_cmd('cd toWeb; firebase deploy') # Puts toWeb folder online at firebase
+
+if not (os.path.exists('folders')):
+	os.mkdir('folders')
 publish(folder, imagesPerPerson, serverType, annotations, user) # Create and publish hits to Amazonon
 
 

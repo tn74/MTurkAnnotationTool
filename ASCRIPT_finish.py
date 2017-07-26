@@ -15,6 +15,8 @@ from PIL import Image
 
 """
 Variable Information: 
+user 					- 	the name of the user under which an AWS access and secret access keys are listed inside the config.ini file
+
 folder 					- 	the directory name inside 'folders' that has a hitList to work with
 
 serverType 				- 	specifies if these images should be pulled off of the development or production server
@@ -27,13 +29,14 @@ processingOneLargeImage -	True if this folder contains hits for a large satellit
 
 Set the variables below before you run the script
 """
-folder = '030740_nw20170721-145231' 
-serverType = 'production'
+user = 'trishul3'
+folder = 'Norfolk_01_training20170725-230110' 
+serverType = 'developer'
 processingOneLargeImage = True 
 
 
-retrieveFolder.retrieve(folder, serverType) 
-if (processingOneLargeImages):
+retrieveFolder.retrieve(user, folder, serverType) 
+if (processingOneLargeImage):
 	jsonReader.condense(folder)
 	uif.annImageWholeJSON(folder)
 else:
