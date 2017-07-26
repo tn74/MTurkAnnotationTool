@@ -79,7 +79,7 @@ The program is configured to run immediately with example Object/Annotation Type
 - Powerplant: Polygon
 - Lamp Post: Point
 - Tree: Polygon
-- Feel free to use their existing helpfiles as templates when making your own or make your own fomr scratch!
+- Feel free to use their existing helpfiles as templates when making your own or make your own from scratch!
 
 ***
 
