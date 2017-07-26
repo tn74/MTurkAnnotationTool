@@ -39,7 +39,10 @@ Open ASCRIPT_begin.py and read the variable information at the head of the file 
 - Firebase Command Line Tools (from https://firebase.google.com/docs/cli/)
 
 ### Installation:
-1. Clone this repository and install all dependencies with pip
+1. Clone this repository and install all dependencies. For a quick way to do this, try the following: 
+````
+$ pip install -r requirements.txt
+````
 
 2. Get the Site deployed on Firebase
 	1. Make a Goolge Account if you do not have one (gmail will do)
