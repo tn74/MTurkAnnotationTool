@@ -29,7 +29,7 @@ processingOneLargeImage -	True if this folder contains hits for a large satellit
 
 Set the variables below before you run the script
 """
-user = 'trishul3'
+user = 'Trishul'
 folder = 'Norfolk_01_training20170725-230110' 
 serverType = 'developer'
 processingOneLargeImage = True 

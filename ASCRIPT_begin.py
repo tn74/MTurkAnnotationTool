@@ -52,10 +52,11 @@ processingOneLargeImage = True
 imageToCut = 'Norfolk_01_training.tif'
 folder = 'Norfolk_01_training' # Must be name of image above without file extension if processOneLargeImage is True
 
-user = 'defaultUser' # Name of user inside config file
+user = 'Trishul' # Name of user inside config file
 serverType = 'developer'				
 imagesPerPerson = 2 
 annotations = ['building','road']
+
 
 
 
@@ -69,9 +70,8 @@ def subprocess_cmd(command):
     proc_stdout = process.communicate()[0].strip()
     print (proc_stdout)
 print('Deploying Site... This may take a few minutes')
-subprocess_cmd ('cd toWeb')
-subprocess_cmd ('firebase deploy') # Puts toWeb folder online at firebase
-
+subprocess_cmd ('cd toWeb && firebase deploy') # Puts toWeb folder online at firebase
+print('Site deployed')
 if not (os.path.exists('folders')):
 	os.mkdir('folders')
 publish(folder, imagesPerPerson, serverType, annotations, user) # Create and publish hits to Amazonon
