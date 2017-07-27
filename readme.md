@@ -39,7 +39,10 @@ Open ASCRIPT_begin.py and read the variable information at the head of the file 
 - Firebase Command Line Tools (from https://firebase.google.com/docs/cli/)
 
 ### Installation:
-1. Clone this repository and install all dependencies with pip
+1. Clone this repository and install all dependencies. For a quick way to do this, try the following: 
+````
+$ pip install -r requirements.txt
+````
 
 2. Get the Site deployed on Firebase
 	1. Make a Goolge Account if you do not have one (gmail will do)
@@ -120,8 +123,29 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 	- The program ships with support for "polygon", "line", and "point" annotation types
 
 
+
+#### Verifying annotations: Using the Hitchecker (ASCRIPT_hit_checker.py)
+You will often want to ensure the validity and accuracy of your annotation dataset by filtering out the occasional human errors, accidental or systematic, made by the Turk users who complete the HITs. To do this, our platform includes a script that launches a basic GUI interface that generates labeled images with the user-submitted annotations and allows you to either Accept or Reject the annotation data for use and to of course pay your Turkers through Amazon for their successful completion of the HIT. The GUI runs on Tkinter, which is part of the standard Python library and thus should run on your machine without specific pip installation, and uses the boto client to interface with the Turk platform- allowing you to pay Turkers immediately on clicking 'Accept' and provide feedback immediately upon rejection (which can be modified). 
+
+- When you click the 'Accept' button, the user who completed the HIT/set of HITs will be compensated. 
+- When you click reject, a message ('Sorry, your annotations look incomplete!') is sent to the Turk user who annotated incorrectly. This message can be modified by editing the 'RequesterFeedback' variable in usefulBotoFunctions.py. 
+- Both accepted and rejected HITs are transcribed (in their JSON form) to accepted.txt and rejected.txt respectively. 
+
+IMPORTANT: To run the Hitchecker from Terminal, you should provide an input parameter using '-f'/'--folder' to let the script know the location of the JSON file that contains the HITs that you want to evaluate. 
+Example: Say we want to evaluate a recent set of 100 HITs completed by Turkers. The images that we uploaded to Turk for this set and a text file of the json responses are stored in indJSONS.txt in this folder. To run the Hitchecker on this set of HITs, we run the following from Terminal, which will read the indJSONS.txt file from the input folder: 
+````
+$ python ASCRIPT_hit_checker.py --folder images 
+100
+````
+You should immediately see a printed number indicated the number of HITs inside the text file of jsons. The program will now work to generate and load all the annotated images given the data in this text file, so you will need to wait a few minutes. You will then see the GUI launch with annotated images. To adjust the size of the windows or the resizing of the images, change the lines in the GUI class in ASCRIPT_hit_checker.py under the comment that indicates these options (line 91). 
+
+You can now Accept or Reject HITs, and the program will display "The hit was accepted!" or "The hit was rejected!" if the script is properly able to make requests to the Turk API (boto3). You will ideally want to judge correctness of the annotation on the basis of the object that HIT assigned them to annotate- this will be displayed in a static button above the Accept and Reject button. It will also attempt to delete generated images from memory to be more space efficient, however, this might fail depending on file structure. The GUI will still run and accept/reject HITs just fine. 
+
+After you close the GUI, the terminal will summarize the accepted and rejected work, and the accepted.txt and rejected.txt files will be generated inside the folder. You can also close the GUI and return later- annotations that you have already evaluated will not be revisited when you relaunch the program. As long as the actual HIT has already been dealt with through Amazon (i.e workers have been paid), your work will be saved. 
+
+
 ### Thanks To
-Developemnt Team:
+Development Team:
 - Dr. Kyle Bradbury
 - Ben Brigman
 - Boning Li

@@ -11,20 +11,36 @@ from tkinter import Tk, Label, Button
 from PIL import Image
 from PIL.ImageDraw import Draw
 import json
-import usefulBotoFunctions as uf
+import usefulFunctions as uf
 import usefulImageFunc as ui
 from tkinter import *
 from PIL import Image, ImageTk
 import os
+import argparse
+
+ap = argparse.ArgumentParser(description='Accept or reject hits from the entered directory.')
+
+ap.add_argument("-f", "--folder", type=str, default= ".",
+                help="String of the folder that contains indJSONS.txt (a txt file of jsons). ex: folders/powerplants20170707-130633")
+args = vars(ap.parse_args())
+
+imgdir = "/".join(args["json"].split("/")[:-1])
 
 class Hit:
     def __init__(self, txt, id, img, dir, annot):
+        """
+        :param txt: whole json line
+        :param id: assignmentID
+        :param img: image filename
+        :param dir: directory of image files
+        :param annot:
+        """
         self.txt = txt
         self.id = id
         self.img = img
         self.dir = dir
-        self.result = ""
         self.annot = annot
+        self.result = "" # reference to accepted or rejected status
 
     def __str__(self):
         return self.dir + '/' + self.img
@@ -42,6 +58,7 @@ class Hit:
 # [64, 80, 131, 119]], [[47, 16, 44, 79], [77, 49, 72, 104], [85, 114, 139, 111],167, 182, 195, 210, 199, 181]]]},
 # {"name": "road", "type": "line", "data": [[[123, 234, 251, 261, 262, 264, 217]], [[6, 61, 69, 79, 90, 119, 291]]]},
 # {"name": "car", "type": "point", "data": [[154, 159, 215, 250], [59, 46, 37, 134]]}]}
+
 accepted, rejected = [], []
 
 class GUI:
@@ -49,18 +66,28 @@ class GUI:
         self.master = master
         self.hit = hit
         # get fixed window size by setting bounds
-        master.minsize(width=383, height=383)
-        master.maxsize(width=383, height=383)
-# 360
+
+
         # master.bind('y', self.y)
         # master.bind('n', self.n)
 
 
         master.title('Accept or Reject HITs')
 
-        img_path = "toWeb/images/" + hit.dir + "/" + hit.img
+        img_path = "toWeb/public/images/" + hit.dir + "/" + hit.img
         self.gen_img = ui.gen_Image(img_path, hit.txt)
-        img = ImageTk.PhotoImage(Image.open(self.gen_img))
+        img = Image.open(self.gen_img)
+        # [width, height] = img.size
+
+        # adjust these to resize images or the window! 
+        width = img.size[0]//3
+        height = img.size[1]//3
+        img = img.resize((width, height), Image.ANTIALIAS)
+        master.minsize(width=width + 100, height=height + 100)
+        master.maxsize(width=width + 100, height=height + 100)
+
+        img = ImageTk.PhotoImage(img)
+
         # txt = self.hit.annot
         self.label = Label(master, image = img)
         self.label.image = img
@@ -102,11 +129,11 @@ class GUI:
         except:
             print('file not found')
 
-def loadjson(file):
+def loadjson(filepath):
     """ Returns a list of Hit objects using jsons in a text file, and the directory name in a tuple.
         @param file .txt file that contains JSON objects."""
     hits = []
-    for line in open(file):
+    for line in open(filepath):
         d = json.loads(line)
         id = d["assignmentID"]
         dir = d["fileName"].split("/")[0]
@@ -116,9 +143,13 @@ def loadjson(file):
     return (hits, dir)
 
 root = Tk()
-folder = 'plants20170706-154950'
-hitlist = loadjson("folders/"+folder+"/indJSONS.txt")[0] # returns a list
+path = args['folder'] + '/indJSONS.txt'
+hitlist = loadjson(path)[0] # returns a list
 print (len(hitlist))
+
+
+# "folders/'powerplants20170707-130633/indJSONS.txt"
+
 for f in hitlist:
     status = uf.checkStatus(uf.createRealClient("Bradbury"), f.id)
     if status == "Submitted":
@@ -132,17 +163,17 @@ accepted_ids = [hit.id for hit in accepted]
 rejected_ids = [hit.id for hit in rejected]
 
 print('{} hits were approved'.format(len(accepted_ids))) # prints after the window is closed
-print('{} hits were rejected'.format(len(accepted_ids)))
+print('{} hits were rejected'.format(len(rejected_ids)))
 
-f = open("accepted" + str(hitlist[1].dir) + ".txt", "w+")
+f = open(imgdir + "/accepted" + ".txt", "a")
 for i in accepted:
-     f.write(i.id + '\n')
+     f.write(json.dumps(i.txt) + '\n')
 f.close()
 
 
-rej = open("rejected" + str(hitlist[1].dir) + ".txt", "w+")
+rej = open(imgdir + "/rejected" + ".txt", "a")
 for i in rejected:
-     rej.write(i.id + '\n')
+     rej.write(json.dumps(i.txt) + '\n')
 rej.close()
 
 uf.approveAssignments(uf.createRealClient("Bradbury"), accepted_ids) # Approve HITs with boto3

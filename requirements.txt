@@ -1,0 +1,7 @@
+boto==2.46.1
+boto3==1.4.4
+botocore==1.5.88
+matplotlib==2.0.2
+numpy==1.12.1
+numpydoc==0.6.0
+Pillow==4.1.1
