@@ -1,2 +1,4 @@
 *.pyc
+*.ini
+config.ini
 configPriv.ini
