@@ -4,7 +4,7 @@ import json
 import configparser
 import os
 
-firebaseProjectID = 'amtannotate3'
+firebaseProjectID = 'Your firebase project id here'
 
 if not (os.path.exists('config.ini')):
 	config = configparser.RawConfigParser()

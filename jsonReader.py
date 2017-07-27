@@ -2,20 +2,18 @@ import json
 import os
 from PIL import Image
 from PIL.ImageDraw import Draw
-import sys
-sys.path.append("../")
 
-# Python class to serve as easy way of storing information about each image (small or large)
+topLevelDir = 'HITBatches'
 
-#Reads json text file as json file. EDIT THIS FOR EAC HOF THE AIGHOIANGIOPANVPOISGBP(UWGH{AOIFN})
-def condense(folder):
+def consolidateLargeImage(hitBatch, jsonFileToConsolidate):
 	"""
-	:param folder: String - name of folder (inside folders) to process.
-	:return: None - Method processes indJSON.txt file inside folder and produces the wholeJSON.txt
+	:param hitBatch: String - name of hitBatch (inside HITBatches) to process.
+	:param jsonFileToConsolidate: String - name of file containing annotations in json form that should be consolidated into a larger image
+	:return: None - Method processes indJSON.txt file inside hitBatch and produces the wholeJSON.txt
 	"""
 	img = {'fileName':'', 'annotations':[], 'objs':[]}
-	contentstring = open('folders/'+folder+'/indJSONS.txt', "r").readlines()
-	print('folders/'+folder+'/indJSONS.txt')
+	contentstring = open(topLevelDir + '/'+hitBatch+'/' + jsonFileToConsolidate, "r").readlines()
+	print(topLevelDir + '/' + hitBatch + '/' + jsonFileToConsolidate)
 	print (contentstring)
 	num_lines = len(contentstring)
 	for x in range(0, num_lines):
@@ -52,7 +50,7 @@ def condense(folder):
 
 
 	#Write to file
-	writeFileName = 'folders/' + folder + '/wholeJSON.txt'
+	writeFileName = topLevelDir + '/' + hitBatch + '/consolidated_' + jsonFileToConsolidate
 	writeFile = open(writeFileName, 'w')
 	fullImgjson = json.dumps(img)
 	writeFile.write(fullImgjson)
@@ -60,12 +58,12 @@ def condense(folder):
 # Draw all the annotations on the original and save it
 
 
-def condenseUnconnected(folder):
+def condense(hitBatch, fileToCondense):
 	"""
 	
 	"""
 	allFiles = {}
-	for line in open('folders/'+folder+'/indJSONS.txt').readlines():
+	for line in open(topLevelDir + '/'+hitBatch+'/' + fileToCondense).readlines():
 		indObj = json.loads(line)
 		if (indObj['fileName'] not in allFiles):
 			allFiles[indObj['fileName']] = indObj
@@ -79,7 +77,7 @@ def condenseUnconnected(folder):
 					if (not obj['name'] in allFiles[indObj['fileName']]['annotations']):
 						allFiles[indObj['fileName']]['annotations'].append(obj['name'])
 					break
-	writeFileName = 'folders/' + folder + '/condenseIndiJSONS.txt'
+	writeFileName = topLevelDir + '/' + hitBatch + '/condensed_' + fileToCondense
 	writeFile = open(writeFileName, 'w')
 	for key in allFiles:
 		jsontext = json.dumps(allFiles[key])
@@ -101,8 +99,6 @@ def convertDataRecurse(data, addVal):
 	for i in range(0,len(data)):
 		data[i] = convertDataRecurse(data[i], addVal)
 	return data
-
-
 
 
 

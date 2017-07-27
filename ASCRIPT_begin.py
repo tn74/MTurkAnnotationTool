@@ -1,31 +1,14 @@
 """
 This program publishes images in large batches to Amazon Mechanical Turk for annotation. Once published, all 
-information relevant to this batch will be stored inside folders/[batchName and TimeStamp]
+information relevant to a particular batch will be stored inside HITBatches/[batchName and TimeStamp]
 Use ASCRIPT_finish.py to get image annotation results once they have been published with this script
 
 Author: Trishul Nagenalli (tn74@duke.edu)
 Organization: Duke Energy Data Analytics Lab
-"""
 
-import os
-from pubfolderhits import publish
-from imCut import cut
-from subprocess import call
-import subprocess
-
-"""
 Variable Information: 
 
-processingOneLargeImage -	True if this folder contains hits for a large image that was cut up before being posted online, 
-							indicating that the images on Turk are connected to one another (example: cut a large satellite
-							image into pieces before posting online)
-							False if this folder contains hits for images that are disconnected from one another (example: 
-							images are of powerplants across the United States)
-
-imageToCut				-	Name of large image that needs to be cut if processingOneLargeImage is True. Does not matter 
-							if processingOneLargeImage is False
-
-folder					-	Name of folder inside toWeb/public/images that contains the images to be annotated. It must be 
+folderToPublish			-	Name of folder inside toWeb/public/images that contains the images to be annotated. It must be 
 							the name of the image that was cut up without the file extension of processingOneLargeImage is True
 
 serverType				-	'developer' if you are testing and want to send hits to developer sandbox
@@ -48,23 +31,32 @@ annotations				-	Array of things you would like the Turk Users to annotate in ea
 
 Set the variables below before you run the script
 """
-processingOneLargeImage = True
-imageToCut = 'Norfolk_01_training.tif'
-folder = 'Norfolk_01_training' # Must be name of image above without file extension if processOneLargeImage is True
-
+#=====================================
+folderToPublish = 'Norfolk_01_training' # Must be name of image that was cut if using LargeImage pre and post processing scripts
 user = 'Trishul' # Name of user inside config file
 serverType = 'developer'				
 imagesPerPerson = 2 
-annotations = ['building','road']
+annotations = ['building','road','powerplant']
 
+#=====================================
 
+import os
+from pubfolderhits import publish
+from imCut import cut
+from subprocess import call
+import subprocess
+import configparser
+import json
 
+topLevelDir = 'HITBatches'
 
-if (processingOneLargeImage):
-	iname = imageToCut.split('.')[0]
-	if not os.path.exists('toWeb/public/images/'+iname):
-		cut(imageToCut)
-
+config = configparser.ConfigParser()
+config.read('config.ini')
+firebaseProjectID = config['SetUp']['firebaseSubdomain']
+todump = {}
+todump["projects"] = {}
+todump["projects"]["default"] = firebaseProjectID
+json.dump(todump, open('toWeb/.firebaserc', 'w'))
 def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
     proc_stdout = process.communicate()[0].strip()
@@ -72,9 +64,9 @@ def subprocess_cmd(command):
 print('Deploying Site... This may take a few minutes')
 subprocess_cmd ('cd toWeb && firebase deploy ') # Puts toWeb folder online at firebase
 print('Site deployed')
-if not (os.path.exists('folders')):
-	os.mkdir('folders')
-publish(folder, imagesPerPerson, serverType, annotations, user) # Create and publish hits to Amazonon
+if not (os.path.exists(topLevelDir)):
+	os.mkdir(topLevelDir)
+publish(folderToPublish, imagesPerPerson, serverType, annotations, user) # Create and publish hits to Amazonon
 
 
 

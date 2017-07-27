@@ -10,7 +10,7 @@ import configparser
 
 # Use the Amazon Mechanical Turk Sandbox to publish test Human Intelligence Tasks (HITs) without paying any money.
 # Sign up for a Sandbox account at https://requestersandbox.mturk.com/ with the same credentials as your main MTurk account.
-
+topLevelDir = 'HITBatches'
 
 def processResponse(response):
 	allfilejsons = [] # Stores the answer data (json text) and for each user who completed a hit
@@ -60,7 +60,7 @@ def getResponse(hid):
 
 def processAllHits(caseFolder):
 	afj = []
-	hitfile = open('folders/' + caseFolder + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
+	hitfile = open(topLevelDir + '/' + caseFolder + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
 	for line in hitfile:
 		line = line[:-1]
 		hitid = line.split(', ')[1]
@@ -71,7 +71,7 @@ def processAllHits(caseFolder):
 
 
 def storeHits(caseFolder, allfilejsons):
-	jsonStore = open('folders/'+caseFolder+'/indJSONS.txt', 'w')
+	jsonStore = open(topLevelDir + '/'+caseFolder+'/all_submitted.txt', 'w')
 	for js in allfilejsons:
 		jsonStore.write(js+'\n')
 

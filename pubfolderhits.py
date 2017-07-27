@@ -11,7 +11,7 @@ import configparser
 
 # Use the Amazon Mechanical Turk Sandbox to publish test Human Intelligence Tasks (HITs) without paying any money.
 # Sign up for a Sandbox account at https://requestersandbox.mturk.com/ with the same credentials as your main MTurk account.
-
+topLevelDir = 'HITBatches'
 
 def publishHit(folder, imgSet, client, ann, upTime):
     config = configparser.ConfigParser()
@@ -35,7 +35,8 @@ def publishHit(folder, imgSet, client, ann, upTime):
     # questionSampleFile = open("my_question.xml", "r")
     # questionSample = questionSampleFile.read()
 
-    # Create a qualification with Locale In('US', 'CA') requirement attached
+    # Create a qualification with Locale In('US') requirement attached 
+    # NOT CURRENTLY USED but template available if you would like
     localRequirements = [{
         'QualificationTypeId': '00000000000000000071',
         'Comparator': 'In',
@@ -54,8 +55,7 @@ def publishHit(folder, imgSet, client, ann, upTime):
         Title = 'Annotate Image',
         Keywords = 'Computer Vision, Image, Annotation',
         Description = 'Annotate images for database',
-        Question = qxml,
-        QualificationRequirements = localRequirements
+        Question = qxml
     )
 
     # The response included several fields that will be helpful later
@@ -67,7 +67,7 @@ def publishHit(folder, imgSet, client, ann, upTime):
     return hit_id
 
 def publishAll(folderName, numPer, client, ann, upTime):
-    hitfileFolder = 'folders/'+folderName+time.strftime("%Y%m%d-%H%M%S")
+    hitfileFolder = topLevelDir + '/'+folderName+time.strftime("%Y%m%d-%H%M%S")
     os.mkdir(hitfileFolder)
     hitfileName = hitfileFolder + '/hitList.txt'
     hitidfile = open(hitfileName,'w')

@@ -6,12 +6,12 @@ from PIL.ImageDraw import Draw
 import matplotlib.path as mplPath
 import numpy as np
 import matplotlib.pyplot as plt
-
+topLevelDir = 'HITBatches'
 
 def genConfArrays(folder):
-	if not os.path.exists('folders/' + folder + '/data'):
-		os.mkdir('folders/' + folder + '/data')
-	jsonText = open('folders/' + folder + '/wholeJSON.txt', 'r').readline()
+	if not os.path.exists(topLevelDir + '/' + folder + '/data'):
+		os.mkdir(topLevelDir + '/' + folder + '/data')
+	jsonText = open(topLevelDir + '/' + folder + '/wholeJSON.txt', 'r').readline()
 	wholeImg = json.loads(jsonText);
 	img = Image.open('imToCut/'+wholeImg['fileName'])
 	width, height = img.size
@@ -29,11 +29,11 @@ def genConfArrays(folder):
 		npArr = npArr.astype(int)
 		plt.title(wholeImg['fileName'] + " " + obj['name'] + " Condfidence Map")
 		plt.imshow(npArr, cmap='hot', interpolation='nearest')
-		plt.savefig('folders/' + folder + '/' +obj['name']+'Conf.png')
+		plt.savefig(topLevelDir + '/' + folder + '/' +obj['name']+'Conf.png')
 		saveArr[:,:,count] = npArr
 		count+=1
 		print ("Objects Completed: " + str(count))
-		np.savez_compressed('folders/'+folder+'/data/'+obj['name']+'.npz', data = npArr)
+		np.savez_compressed(topLevelDir + '/'+folder+'/data/'+obj['name']+'.npz', data = npArr)
 
 
 def processPolygon(arr, data):

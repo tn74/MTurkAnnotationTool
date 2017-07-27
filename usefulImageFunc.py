@@ -3,18 +3,21 @@ import os
 from PIL import Image
 from PIL.ImageDraw import Draw
 
-def annImageWholeJSON(folder):
+topLevelDir = 'HITBatches'
+
+def annImageWholeJSON(folder, annotationFile):
 	"""
 	Generates and saves a fully annoted version of the fullSatellite image inside folder
 	:param folder: folder name containing a wholeJSON.txt file and where annotated image will be saved
 	:return: None. Saves the full satelite image annotated with everything inside the wholeJSON.txt file
 	"""
-	contentstring = open('folders/' + folder + '/wholeJSON.txt', "r").readlines()
+	contentstring = open(topLevelDir + '/' + folder + '/' + annotationFile, "r").readlines()
+	annotationFileBase = annotationFile.split('.')[0]
 	im = None
 	for line in contentstring:
 		linejson = json.loads(line)
 		im = annImage('imToCut/'+linejson['fileName'], line)
-	im.save('folders/' + folder + '/annImage.png')
+	im.save(topLevelDir + '/' + folder + '/' + annotationFileBase + '_annotations.png')
 
 def annImageIndi(jsonText):
 	"""
