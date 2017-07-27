@@ -2,3 +2,4 @@
 *.ini
 config.ini
 configPriv.ini
+.*
