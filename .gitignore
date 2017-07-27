@@ -2,4 +2,7 @@
 *.ini
 config.ini
 configPriv.ini
-.*
+toWeb/.*
+folders/
+imToCut/Norfolk_01_training.jpg
+toWeb/public/images/Norfolk_01_training/
