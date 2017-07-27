@@ -4,4 +4,4 @@ def subprocess_cmd(command):
     print (proc_stdout)
 print('Deploying Site... This may take a few minutes')
 subprocess_cmd ('cd toWeb')
-subprocess_cmd ('firebase deploy') # Puts toWeb folder online at firebase
+subprocess_cmd ('firebase init hosting') # Puts toWeb folder online at firebase
