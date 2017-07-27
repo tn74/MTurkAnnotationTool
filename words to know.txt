@@ -1,3 +1,0 @@
-words to define:
-condense
-batchId
