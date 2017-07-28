@@ -18,7 +18,7 @@ hitBatch				- 	The Batch ID of the batch you would like to process (ethe )
 """
 
 #====================== Set Variables below
-hitBatch = 'Norfolk_01_training20170727-152336'
+hitBatch = 'Norfolk_01_training20170728-094147'
 #======================
 
 import jsonReader as jr
