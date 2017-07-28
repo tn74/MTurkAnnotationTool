@@ -17,14 +17,13 @@ from tkinter import *
 from PIL import Image, ImageTk
 import os
 import argparse
+import jsonReader as jr
 
 ap = argparse.ArgumentParser(description='Accept or reject hits from the entered directory.')
 
 ap.add_argument("-f", "--folder", type=str, default= ".",
-                help="String of the folder that contains indJSONS.txt (a txt file of jsons). ex: folders/powerplants20170707-130633")
+help="String name of the folder inside the 'HITBatches' directory that contains all_submitted.txt (a txt file of jsons). ex: powerplants20170707-130633")
 args = vars(ap.parse_args())
-
-imgdir = "/".join(args["json"].split("/")[:-1])
 
 class Hit:
     def __init__(self, txt, id, img, dir, annot):
@@ -74,8 +73,8 @@ class GUI:
 
         master.title('Accept or Reject HITs')
 
-        img_path = "toWeb/public/images/" + hit.dir + "/" + hit.img
-        self.gen_img = ui.gen_Image(img_path, hit.txt)
+        self.img_path = "toWeb/public/images/" + hit.dir + "/" + hit.img
+        self.gen_img = ui.gen_Image(self.img_path, hit.txt)
         img = Image.open(self.gen_img)
         # [width, height] = img.size
 
@@ -110,10 +109,7 @@ class GUI:
         self.by.destroy()
         self.accept_button.destroy()
         self.reject_button.destroy()
-        try:
-            os.remove(self.gen_img)
-        except:
-            print('file not found')
+
 
     def n(self, event=None):
         self.hit.reject()
@@ -123,11 +119,9 @@ class GUI:
         self.by.destroy()
         self.accept_button.destroy()
         self.reject_button.destroy()
-        os.remove(self.gen_img)
-        try:
-            os.remove(self.gen_img)
-        except:
-            print('file not found')
+
+
+
 
 def loadjson(filepath):
     """ Returns a list of Hit objects using jsons in a text file, and the directory name in a tuple.
@@ -143,12 +137,12 @@ def loadjson(filepath):
     return (hits, dir)
 
 root = Tk()
-path = args['folder'] + '/indJSONS.txt'
+path = 'HITBatches/' + args['folder'] + '/all_submitted.txt'
 hitlist = loadjson(path)[0] # returns a list
 print (len(hitlist))
 
 
-# "folders/'powerplants20170707-130633/indJSONS.txt"
+# "HITBatches/powerplants20170707-130633/all_submitted.txt"
 
 for f in hitlist:
     status = uf.checkStatus(uf.createRealClient("Bradbury"), f.id)
@@ -156,7 +150,16 @@ for f in hitlist:
         my_gui = GUI(root, f)
     else:
         print("AssignmentID " + f.id + " has already been evaluated.")
+        if status == "Approved": 
+            accepted.append(f)
+            print ('Adding to accepted array.')
+        if status == 'Rejected': 
+            rejected.append(f)
+            print ('Adding to rejected array.')
+
 root.mainloop()
+
+
 
 
 accepted_ids = [hit.id for hit in accepted]
@@ -165,17 +168,39 @@ rejected_ids = [hit.id for hit in rejected]
 print('{} hits were approved'.format(len(accepted_ids))) # prints after the window is closed
 print('{} hits were rejected'.format(len(rejected_ids)))
 
-f = open(imgdir + "/accepted" + ".txt", "a")
+
+p1 = 'HITBatches/' + args["folder"] + "/accepted.txt"
+
+
+
+f = open(p1, 'w') 
 for i in accepted:
-     f.write(json.dumps(i.txt) + '\n')
+     f.write(i.txt)
 f.close()
 
+p2 = 'HITBatches/' + args["folder"] + "/rejected.txt"
 
-rej = open(imgdir + "/rejected" + ".txt", "a")
+
+rej = open(p2, 'w')
 for i in rejected:
-     rej.write(json.dumps(i.txt) + '\n')
+     rej.write(i.txt)
 rej.close()
 
 uf.approveAssignments(uf.createRealClient("Bradbury"), accepted_ids) # Approve HITs with boto3
 uf.rejectAssignments(uf.createRealClient("Bradbury"), rejected_ids) # Reject HITs with boto3
+jr.condenseUnconnected(args['folder'], 'accepted.txt')
+
+
+
+if not os.path.exists('HITBatches/' + args['folder'] + '/acceptedCondensedImages'):
+    os.mkdir('HITBatches/' + args['folder'] + '/acceptedCondensedImages')
+print('Making images with only accepted annotations ')
+for line in open('HITBatches/'+args['folder']+'/condensedfromaccepted.txt').readlines():
+    pilimage = ui.annImageIndi(line)
+    js = json.loads(line)
+    print(line)
+    pilimage.save('HITBatches/'+args['folder']+'/acceptedCondensedImages/'+js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+print('Done Making Images')
+
+
 
