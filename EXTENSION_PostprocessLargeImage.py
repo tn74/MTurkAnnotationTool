@@ -27,8 +27,8 @@ import os
 
 topLevelDir = 'HITBatches'
 jr.consolidateLargeImage(hitBatch, 'all_submitted.txt')
-uif.annImageWholeJSON(hitBatch, 'consolidated_all_submitted.txt')
+uif.annImageWholeJSON(hitBatch, 'pieced_all_submitted.txt')
 if os.path.exists(topLevelDir + '/' + hitBatch + '/accepted.txt'):
 	print('acepted exists')
 	jr.consolidateLargeImage(hitBatch, 'accepted.txt')
-	uif.annImageWholeJSON(hitBatch, 'consolidated_accepted.txt')
+	uif.annImageWholeJSON(hitBatch, 'pieced_accepted.txt')

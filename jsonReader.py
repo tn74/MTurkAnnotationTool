@@ -50,7 +50,7 @@ def consolidateLargeImage(hitBatch, jsonFileToConsolidate):
 
 
 	#Write to file
-	writeFileName = topLevelDir + '/' + hitBatch + '/consolidated_' + jsonFileToConsolidate
+	writeFileName = topLevelDir + '/' + hitBatch + '/pieced_' + jsonFileToConsolidate
 	writeFile = open(writeFileName, 'w')
 	fullImgjson = json.dumps(img)
 	writeFile.write(fullImgjson)

@@ -33,29 +33,31 @@ import postProcessing
 from PIL import Image
 import os
 import json
+import postProcessing as pp
 
 topLevelDir = 'HITBatches'
+outputDir = topLevelDir + '/' +  hitBatch
 retrieveFolder.retrieve(user, hitBatch, serverType) 
 allSubmittedCondensedDir = 'allSubmittedCondensedImages'
 acceptedCondensedDir = 'acceptedCondensedImages'
 jr.condense(hitBatch, 'all_submitted.txt')
-if not os.path.exists(topLevelDir + '/' + hitBatch + '/' + allSubmittedCondensedDir):
-	os.mkdir(topLevelDir + '/'+hitBatch+'/' + allSubmittedCondensedDir)
-for line in open(topLevelDir + '/'+hitBatch+'/all_submitted.txt').readlines():
+if not os.path.exists(outputDir + '/' + allSubmittedCondensedDir):
+	os.mkdir(outputDir +'/' + allSubmittedCondensedDir)
+for line in open(outputDir +'/all_submitted.txt').readlines():
 	pilimage = uif.annImageIndi(line)
 	js = json.loads(line)
 	print(line)
-	pilimage.save(topLevelDir + '/'+hitBatch+'/'+ allSubmittedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+	pilimage.save(outputDir + '/' + allSubmittedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
 
-if os.path.exists(topLevelDir + '/'+hitBatch+'/accepted.txt'):
+if os.path.exists(outputDir + '/accepted.txt'):
 	jr.condense(hitBatch, 'accepted.txt')
-	if not os.path.exists(topLevelDir + '/' + hitBatch + '/' + acceptedCondensedDir):
-		os.mkdir(topLevelDir + '/'+hitBatch+'/' + acceptedCondensedDir)
-	for line in open(topLevelDir + '/'+hitBatch+'/accepted.txt').readlines():
+	if not os.path.exists(outputDir + '/' + acceptedCondensedDir):
+		os.mkdir(outputDir + '/' + acceptedCondensedDir)
+	for line in open(outputDir +'/accepted.txt').readlines():
 		pilimage = uif.annImageIndi(line)
 		js = json.loads(line)
 		print(line)
-		pilimage.save(topLevelDir + '/'+hitBatch+'/'+ acceptedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
-
+		pilimage.save(outputDir +'/'+ acceptedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+	pp.genConfArrays(hitBatch, 'condensed_accepted.txt') 
 
 # Make geojson with ke as proeprty to last image 
