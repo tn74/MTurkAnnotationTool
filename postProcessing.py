@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 topLevelDir = 'HITBatches'
 
-def genConfArrays(hitBatch, jsonfile):
+def genConfArrays(hitBatch, jsonfile, *args):
 	print ('Generating Confidence Arrays for ' + jsonfile + '...')
 	if not os.path.exists(topLevelDir + '/' + hitBatch + '/data'):
 		os.mkdir(topLevelDir + '/' + hitBatch + '/data')
@@ -23,7 +23,8 @@ def genConfArrays(hitBatch, jsonfile):
 			print(outdir)
 			img = Image.open('imToCut/'+imgJSON['fileName'])
 			print('try 2: ' + outdir)
-			outdir += '_pieced_accepted'
+			if len(args) > 0:
+				outdir += args[0]
 			print('Made to ourdir')
 		except: 
 			try:
