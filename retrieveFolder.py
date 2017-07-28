@@ -39,13 +39,6 @@ def processResponse(response):
 				print("MISSED: ")
 				print(line)
 				print()
-				#print(line)
-				# print('IN EXCEPT ==========')
-				# print("LINE: " + str(type('LINE')))
-				# line = line[:-1]
-				# print('EXCEPT: ' + line)
-				# print('made it past line')
-				# ans = json.loads(line)
 	return allfilejsons
 
 
@@ -58,25 +51,45 @@ def getResponse(hid):
 	)
 	return response # A dict 
 
-def processAllHits(caseFolder):
+def getAcceptedResponse(hid):
+	response = client.list_assignments_for_hit( # Specifies which hits to get. Currently takes everything
+		HITId=hid,
+		AssignmentStatuses=[
+			'Approved'
+		]
+	)
+	return response # A dict 
+
+def processAllHits(hitBatch):
 	afj = []
-	hitfile = open(topLevelDir + '/' + caseFolder + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
+	hitfile = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
 	for line in hitfile:
 		line = line[:-1]
 		hitid = line.split(', ')[1]
 		resp = getResponse(hitid)
 		afj = afj + processResponse(resp)
-	storeHits(caseFolder, afj)
+	storeHits(hitBatch, afj)
 
 
 
-def storeHits(caseFolder, allfilejsons):
-	jsonStore = open(topLevelDir + '/'+caseFolder+'/all_submitted.txt', 'w')
+def storeHits(hitBatch, allfilejsons):
+	jsonStore = open(topLevelDir + '/'+hitBatch+'/all_submitted.txt', 'w')
 	for js in allfilejsons:
 		jsonStore.write(js+'\n')
 
+def getAndStoreAcceptedHits(hitBatch):
+	aj = []
+	hitfile = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
+	for line in hitfile:
+		line = line[:-1]
+		hitid = line.split(', ')[1]
+		resp = getAcceptedResponse(hitid)
+		af = af + processResponse(resp)
+	jsonStore = open(topLevelDir + '/'+hitBatch+'/accepted.txt', 'w')
+	for js in allfilejsons:
+		jsonStore.write(js+'\n')
 
-def retrieve(userName, caseFolder, pubType):
+def retrieve(userName, hitBatch, pubType):
 	config = configparser.ConfigParser()
 	config.read('config.ini')
 	region_name = 'us-east-1'
@@ -100,4 +113,5 @@ def retrieve(userName, caseFolder, pubType):
 		aws_access_key_id = config[userName]['awskey'], 			## Put Amazon Web Services Access Keys in config.ini File
 	    aws_secret_access_key = config[userName]['awssakey'], 
 	)
-	processAllHits(caseFolder)
+	processAllHits(hitBatch)
+	storeAcceptedHits(hitBatch)
