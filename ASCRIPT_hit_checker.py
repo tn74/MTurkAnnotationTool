@@ -22,7 +22,7 @@ import jsonReader as jr
 ap = argparse.ArgumentParser(description='Accept or reject hits from the entered directory.')
 
 ap.add_argument("-f", "--folder", type=str, default= ".",
-help="String of the folder inside the 'folders' directory that contains indJSONS.txt (a txt file of jsons). ex: powerplants20170707-130633")
+help="String name of the folder inside the 'HITBatches' directory that contains all_submitted.txt (a txt file of jsons). ex: powerplants20170707-130633")
 args = vars(ap.parse_args())
 
 class Hit:
@@ -137,12 +137,12 @@ def loadjson(filepath):
     return (hits, dir)
 
 root = Tk()
-path = 'folders/' + args['folder'] + '/indJSONS.txt'
+path = 'HITBatches/' + args['folder'] + '/all_submitted.txt'
 hitlist = loadjson(path)[0] # returns a list
 print (len(hitlist))
 
 
-# "folders/'powerplants20170707-130633/indJSONS.txt"
+# "HITBatches/powerplants20170707-130633/all_submitted.txt"
 
 for f in hitlist:
     status = uf.checkStatus(uf.createRealClient("Bradbury"), f.id)
@@ -169,7 +169,7 @@ print('{} hits were approved'.format(len(accepted_ids))) # prints after the wind
 print('{} hits were rejected'.format(len(rejected_ids)))
 
 
-p1 = 'folders/' + args["folder"] + "/accepted.txt"
+p1 = 'HITBatches/' + args["folder"] + "/accepted.txt"
 
 
 
@@ -178,7 +178,7 @@ for i in accepted:
      f.write(i.txt)
 f.close()
 
-p2 = 'folders/' + args["folder"] + "/rejected.txt"
+p2 = 'HITBatches/' + args["folder"] + "/rejected.txt"
 
 
 rej = open(p2, 'w')
@@ -192,14 +192,14 @@ jr.condenseUnconnected(args['folder'], 'accepted.txt')
 
 
 
-if not os.path.exists('folders/' + args['folder'] + '/acceptedCondensedImages'):
-    os.mkdir('folders/' + args['folder'] + '/acceptedCondensedImages')
+if not os.path.exists('HITBatches/' + args['folder'] + '/acceptedCondensedImages'):
+    os.mkdir('HITBatches/' + args['folder'] + '/acceptedCondensedImages')
 print('Making images with only accepted annotations ')
-for line in open('folders/'+args['folder']+'/condensedfromaccepted.txt').readlines():
+for line in open('HITBatches/'+args['folder']+'/condensedfromaccepted.txt').readlines():
     pilimage = ui.annImageIndi(line)
     js = json.loads(line)
     print(line)
-    pilimage.save('folders/'+args['folder']+'/acceptedCondensedImages/'+js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+    pilimage.save('HITBatches/'+args['folder']+'/acceptedCondensedImages/'+js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
 print('Done Making Images')
 
 
