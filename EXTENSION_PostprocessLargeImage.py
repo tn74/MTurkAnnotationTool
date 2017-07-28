@@ -23,12 +23,15 @@ hitBatch = 'Norfolk_01_training20170727-152336'
 
 import jsonReader as jr
 import usefulImageFunc as uif
+import postProcessing as pp
 import os
 
 topLevelDir = 'HITBatches'
 jr.consolidateLargeImage(hitBatch, 'all_submitted.txt')
 uif.annImageWholeJSON(hitBatch, 'pieced_all_submitted.txt')
-if os.path.exists(topLevelDir + '/' + hitBatch + '/accepted.txt'):
-	print('acepted exists')
-	jr.consolidateLargeImage(hitBatch, 'accepted.txt')
-	uif.annImageWholeJSON(hitBatch, 'pieced_accepted.txt')
+pp.genConfArrays(hitBatch,'pieced_all_submitted.txt')
+os.rename(topLevelDir + '/' + hitBatch + '/data/' + hitBatch[:-15] + '_pieced_accepted/', topLevelDir + '/' + hitBatch[:-15] + '/data/' + hitBatch[:-15] + '_pieced_all_submitted/')
+# if os.path.exists(topLevelDir + '/' + hitBatch + '/accepted.txt'):
+# 	jr.consolidateLargeImage(hitBatch, 'accepted.txt')
+# 	uif.annImageWholeJSON(hitBatch, 'pieced_accepted.txt')
+# 	pp.genConfArrays(hitBatch,'pieced_accepted.txt')

@@ -9,22 +9,30 @@ import matplotlib.pyplot as plt
 topLevelDir = 'HITBatches'
 
 def genConfArrays(hitBatch, jsonfile):
+	print ('Generating Confidence Arrays for ' + jsonfile + '...')
 	if not os.path.exists(topLevelDir + '/' + hitBatch + '/data'):
 		os.mkdir(topLevelDir + '/' + hitBatch + '/data')
-	fullFile = open(topLevelDir + '/' + hitBatch + '/'+ jsonfile, 'r')
+	fullFile = open(topLevelDir + '/' + hitBatch + '/'+ jsonfile, 'r').readlines()
+	linesProcessed = 0
 	for jsonText in fullFile:
+		linesProcessed += 1
 		imgJSON = json.loads(jsonText)
 		imgnameroot = imgJSON['fileName'].split('/')[len(imgJSON['fileName'].split('/'))-1].split('.')[0]
 		outdir = topLevelDir + '/' + hitBatch + '/data/' + imgnameroot
-		if not os.path.exists(outdir):
-			os.mkdir(outdir)
 		try: 
+			print(outdir)
 			img = Image.open('imToCut/'+imgJSON['fileName'])
+			print('try 2: ' + outdir)
+			outdir += '_pieced_accepted'
+			print('Made to ourdir')
 		except: 
 			try:
 				img = Image.open('toWeb/public/Images/'+imgJSON['fileName'])
 			except: 
 				raise Exception('Could not find image to develop confidence map: ' + 'toWeb/public/Images/'+imgJSON['fileName'] + ' Make sure hte image is either inside toWeb/Images inside a folder with the other cut images or imToCut')
+		if not os.path.exists(outdir):
+			os.mkdir(outdir)
+		else: continue
 		width, height = img.size
 		count = 0
 		saveArr = np.zeros([height, width, len(imgJSON['objs'])])
@@ -43,12 +51,9 @@ def genConfArrays(hitBatch, jsonfile):
 			imNormalized = Image.fromarray(npArrNorm).convert('L')
 			imRaw.save(outdir + '/raw_' + obj['name'] + '.png')
 			imNormalized.save(outdir + '/normalized_' + obj['name'] + '.jpg')
-			# plt.title(imgJSON['fileName'] + " " + obj['name'] + " Confidence Map")
-			# plt.imshow(normalizeArr(npArr)*255, cmap='binary', interpolation='nearest')
-			# plt.colorbar()
-			# plt.savefig(outdir +obj['name']+'Conf.png')
-			count+=1
-
+		print ('Condensed Images Processed: ' + str(linesProcessed) + ', ' + str(len(fullFile) - linesProcessed) + ' to go', end ='\r')
+	print ('Condensed Images Processed: ' + str(linesProcessed) + ', ' + str(len(fullFile) - linesProcessed) + ' to go')
+	print()
 
 def processPolygon(arr, data):
 	for i in range(0, len(data[0])):
@@ -105,9 +110,7 @@ def processPoint(arr, coords):
 		pointArr.append(coords[1][i]+elrad)
 		drawer.ellipse(pointArr,(255,255,255,25))
 	arr = np.asarray(blank)
-	print(arr)
 	arr = arr[:,:,0]
-	print(arr.size)
 	return arr
 
 def normalizeArr(arr):

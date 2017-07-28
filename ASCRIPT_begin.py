@@ -62,7 +62,7 @@ def subprocess_cmd(command):
     proc_stdout = process.communicate()[0].strip()
     print (proc_stdout)
 print('Deploying Site... This may take a few minutes')
-subprocess_cmd ('cd toWeb && firebase deploy ') # Puts toWeb folder online at firebase
+subprocess_cmd ('cd toWeb && firebase deploy') # Puts toWeb folder online at firebase
 print('Site deployed')
 if not (os.path.exists(topLevelDir)):
 	os.mkdir(topLevelDir)

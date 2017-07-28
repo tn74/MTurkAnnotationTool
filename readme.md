@@ -45,32 +45,21 @@ $ pip install -r requirements.txt
 ````
 
 2. Get the Site deployed on Firebase
-	1. Make a Goolge Account if you do not have one (gmail will do)
+	1. Make a Goolge Account if you do not have one
 	2. Install Firebase CLI (See [Link](https://firebase.google.com/docs/cli/)). Complete at least through ```firebase login```
 	3. Login to Firebase [Console](https://console.firebase.google.com/)
 	4. Create a Firebase Project
 	5. Open terminal and move into the MTurkAnnotationTool/toWeb directory
-	6. Run ```bash firebase list``` in terminal and see the project-id for the project that you just chose
-	7. Enter the following commands:
-		```bash
-		firebase init 
-		```
-		Select 'Hosting' when asked which Firebase CLI feature you would like to setup, and select the project name from step 4 as your default project
-		```bash
-		firebase use --add [ProjectId]
-		firebase deploy
-		```
-		where [ProjectId] is the name of the project you created in step iv
-	8. Open config.ini and put the firebase project-id in the file under ```[SetUp]``` (Example for id "amtannotate" Below)
-		```
-		[SetUp]
-		firebaseSubdomain = amtannotate
-		```
+	6. Run ```bash firebase list``` in terminal and see the project-id for the project that you just created
+	7. Open the script ASCRIPT_INSTALL.py
+	8. Set the firebaseProjectID equal to your project-id 
+	9. Run the ASCRIPT_INSTALL.py
+
 3. Set Up your MTurk Requester Account following these [instructions](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMechanicalTurkGettingStartedGuide/SetUp.html#setup-aws-account). Make sure you complete all steps through Step 5 (setting up the developer sandbox). When making an IAM user, save your AWS Access and Secret Access keys somewhere safe
 
 4. Place your preferred username (doesn't matter what it is so long as you are consistent in your code), AWS Access, and AWS Secret Access Keys inside the config.ini For example, if you wanted to create access for a user named 'Student' with AWS Key 'ABCD' and AWS Secret Access Key '1234'
 	```
-	[Username]
+	[User name]
 	awskey = Your AWS Key Here
 	awssakey = Your AWS Secret Access Key
 	```
@@ -81,7 +70,16 @@ $ pip install -r requirements.txt
 	awssakey = 1234
 
 	```
-5. Test If Installation Was Sucessful By Running ASCRIPT_begin.py, visiting one of the links printed into terminal, completing a HIT, and finally running ASCRIPT_finish.py
+5. Test if installation was successful by following the below instructions
+	1. EXTENSION_PreprocessLargeImage.py
+	2. ASCRIPT_begin.py
+	
+	Go online to a link posted by the begin script when it is publishing hits. It will take you to the developer sandbox where you can see exactly what your HIT would look like to an actual user without having to pay them for it. Do a couple hits so you can test with data.
+
+	3. Open ASCRIPT_finish.py and change the variable hitBatch to the name of the folder inside hitBatches
+	4. Run ASCRIPT_finish.py and see some statistics about your HIT.
+
+	If no crashes occur, you have finished! Explore the images stored inside the data folder
 
 ### What does this repo ship with?
 The program is configured to run immediately with example Object/Annotation Type Pairs, Sample Images, and Helpfiles for the following:
@@ -100,14 +98,14 @@ Feel free to use the existing helpfiles as templates when making your own or mak
 ##### Publishing Hits
 1. Place images you would like to annotate in a folder inside ```toWeb/images/``` 
 2. Firebase deploys your site
-2. ```publish``` a function inside ```pubfolderhits.py``` is called and publishes a HIT to MTurk using your IAM user's access key. 
-	- ```pubfolderhits.py``` contains all the functions relevant to creating hits. If you want to change HIT parameters like:
+3. ```publish()```, a function inside ```pubfolderhits.py``` is called and publishes a HIT to MTurk using your IAM user's API keys. 
+	- ```pubfolderhits.py``` contains all the functions related to creating hits. If you want to change HIT parameters go to 
 		- Compensation for HIT
-		- 
+		- Location Restrictions for a HIT
+
 
 ### Adding Functionality
-
-#### Adding Ant Object to Annotate
+#### Adding A New Type Of Object to Annotate
 For every object (let's call it _obj_) you would like to annotate, you must do the following:
 1. Provide a sample called obj.png inside toWeb/public/images/sample
 2. Provide a help file written in HTML inside toWeb/public/helper
@@ -121,7 +119,23 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
 		```
 	- The program ships with support for "polygon", "line", and "point" annotation types
+4. Add the name of the object to annotations list when running ASCRIPT_begin.py
 
+#### Processing Large Satellite Images
+For every object (let's call it _obj_) you would like to annotate, you must do the following:
+1. Provide a sample called obj.png inside toWeb/public/images/sample
+2. Provide a help file written in HTML inside toWeb/public/helper
+3. Add an entry into fileTypes indicating the tool used to annotate the object in toWeb/public/js/neededJSONS.json
+	- If obj were to be annotated with a line,
+		```
+		fileTypes = '[{"road":"line","powerplant":"polygon"}]' 
+		```
+	- would become
+		```
+		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
+		```
+	- The program ships with support for "polygon", "line", and "point" annotation types
+4. Add the name of the object to annotations list when running ASCRIPT_begin.py
 
 
 #### Verifying annotations: Using the Hitchecker (ASCRIPT_hit_checker.py)

@@ -20,9 +20,9 @@ processingOneLargeImage -	True if this hitBatch contains hits for a large satell
 							the same satellite image)
 """
 #===================================== Set the variables below before you run the script
-user = 'Trishul'
-hitBatch = 'Norfolk_01_training20170727-152336' 
-serverType = 'developer'
+user = 'Bradbury'
+hitBatch = 'StolenFromGPU' 
+serverType = 'production'
 #=====================================
 
 
@@ -41,23 +41,47 @@ retrieveFolder.retrieve(user, hitBatch, serverType)
 allSubmittedCondensedDir = 'allSubmittedCondensedImages'
 acceptedCondensedDir = 'acceptedCondensedImages'
 jr.condense(hitBatch, 'all_submitted.txt')
+
 if not os.path.exists(outputDir + '/' + allSubmittedCondensedDir):
 	os.mkdir(outputDir +'/' + allSubmittedCondensedDir)
+
+
+print ('Making condensed images from all_submitted.txt')
+imgCount = 0
+totalLines = len(open(outputDir +'/all_submitted.txt').readlines())
 for line in open(outputDir +'/all_submitted.txt').readlines():
-	pilimage = uif.annImageIndi(line)
+	imgCount += 1
 	js = json.loads(line)
-	print(line)
-	pilimage.save(outputDir + '/' + allSubmittedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+	outImgPath = outputDir + '/' + allSubmittedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg'
+	if (os.path.exists(outImgPath)): continue
+	pilimage = uif.annImageIndi(line)
+	pilimage.save(outImgPath)
+	print ("Images Made: " + str(imgCount) + ", " + str(totalLines-imgCount) + " lines to go", end = "\r")
+print ("Images Made: " + str(imgCount) + ", " + str(totalLines-imgCount) + " lines to go")
+print('Completed making condensed images')
+print()
 
 if os.path.exists(outputDir + '/accepted.txt'):
+	print ('Making Condensed Images from accepted.txt')
+	imgCount = 0
+	totalLines = len(open(outputDir +'/accepted.txt').readlines())
 	jr.condense(hitBatch, 'accepted.txt')
 	if not os.path.exists(outputDir + '/' + acceptedCondensedDir):
 		os.mkdir(outputDir + '/' + acceptedCondensedDir)
 	for line in open(outputDir +'/accepted.txt').readlines():
-		pilimage = uif.annImageIndi(line)
+		imgCount += 1
 		js = json.loads(line)
-		print(line)
-		pilimage.save(outputDir +'/'+ acceptedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
+		outImgPath = outputDir +'/'+ acceptedCondensedDir + '/' + js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg'
+		if (os.path.exists(outImgPath)): continue
+		pilimage = uif.annImageIndi(line)
+		pilimage.save(outImgPath)
+		print ("Images Made: " + str(imgCount) + ", " + str(totalLines-imgCount) + " lines to go", end = "\r")
+	print ("Images Made: " + str(imgCount) + ", " + str(totalLines-imgCount) + " lines to go")
+	print('Completed making condensed images')
+	print()
+
 	pp.genConfArrays(hitBatch, 'condensed_accepted.txt') 
+else: 
+	print ('No accepted.txt file found')
 
 # Make geojson with ke as proeprty to last image 

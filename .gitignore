@@ -2,7 +2,7 @@ ASCRIPT_merge_folders.py
 *.ini
 config.ini
 configPriv.ini
-toWeb/.*g
+toWeb/public/images/
 imToCut/Norfolk_01_training.jpg
 toWeb/public/images/Norfolk_01_training/
 HITBatches/

@@ -35,6 +35,7 @@ import json
 import configparser
 import os
 
+topLevelDir = 'HITBatches'
 if not (os.path.exists('config.ini')):
 	config = configparser.RawConfigParser()
 	config.add_section('Username Here')
@@ -44,7 +45,8 @@ if not (os.path.exists('config.ini')):
 	config.set('Username Here', 'awssakey', 'Your AWS Secret Access Key')
 	with open('config.ini', 'w') as configfile:
 	    config.write(configfile)
-
+if not (os.path.exists(topLevelDir)):
+	os.mkdir(topLevelDir)
 todump = {}
 todump["projects"] = {}
 todump["projects"]["default"] = firebaseProjectID

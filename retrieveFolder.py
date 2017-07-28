@@ -2,6 +2,7 @@ import boto3
 import json
 import xml.etree.ElementTree as ET
 import configparser
+import datetime
 # Before connecting to MTurk, set up your AWS account and IAM settings as described here:
 # https://blog.mturk.com/how-to-use-iam-to-control-api-access-to-your-mturk-account-76fe2c2e66e2
 #
@@ -14,10 +15,7 @@ topLevelDir = 'HITBatches'
 
 def processResponse(response):
 	allfilejsons = [] # Stores the answer data (json text) and for each user who completed a hit
-	#print(response.keys())
 	allResponses = response["Assignments"]
-	# Extracts some XML data inside the answer field
-	# Uses an XML library (imported as ET) to treat XML tags as a tree and extract the JSON which is always at position 0,1 inside the XML
 	missed = 0
 	for assign in allResponses:
 		answer = assign["Answer"]
@@ -46,13 +44,13 @@ def getResponse(hid):
 	response = client.list_assignments_for_hit( # Specifies which hits to get. Currently takes everything
 		HITId=hid,
 		AssignmentStatuses=[
-			'Submitted' or 'Approved' or 'Rejected',
+			'Submitted', 'Approved', 'Rejected'
 		]
 	)
 	return response # A dict 
 
 def getAcceptedResponse(hid):
-	response = client.list_assignments_for_hit( # Specifies which hits to get. Currently takes everything
+	response = client.list_assignments_for_hit( # Specifies which hits to get
 		HITId=hid,
 		AssignmentStatuses=[
 			'Approved'
@@ -61,14 +59,45 @@ def getAcceptedResponse(hid):
 	return response # A dict 
 
 def processAllHits(hitBatch):
+	hitsProcessed = 0
+	assignmentsViewed = 0
+	imagesProcessed = 0
+	pendingReview = 0
+	totalAssignmentsAvailable = 0
+	assignmentsComplete = 0
+	intendedMax = 0
 	afj = []
+	print()
+	print('Downloading HIT Data')
 	hitfile = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
 	for line in hitfile:
 		line = line[:-1]
 		hitid = line.split(', ')[1]
 		resp = getResponse(hitid)
-		afj = afj + processResponse(resp)
+		processed = processResponse(resp)
+		afj = afj + processed
+		hitsProcessed += 1
+		assignmentsViewed += resp['NumResults']
+		imagesProcessed += len(processed)
+		
+		hitInfo = client.get_hit(HITId = hitid)['HIT']
+		intendedMax += hitInfo['MaxAssignments']
+		pendingReview += hitInfo['NumberOfAssignmentsPending']
+		totalAssignmentsAvailable += hitInfo['NumberOfAssignmentsAvailable']
+		assignmentsComplete += hitInfo['NumberOfAssignmentsCompleted']
+		
+		print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Submitted: ' + str(assignmentsViewed) + ', ' + 'Images Processed: ' + str(imagesProcessed) , end ="\r")
+	print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Submitted: ' + str(assignmentsViewed) + ', ' + 'Images Processed: ' + str(imagesProcessed))
 	storeHits(hitBatch, afj)
+	print ('Intended Total Number of Assignments:\t' + str(intendedMax))
+	print ('Assignments Submitted:\t\t\t' + str(assignmentsViewed))
+	print ('Assignments Missing: \t\t\t' + str(intendedMax-assignmentsViewed))
+	print ('Assignments We Haven\'t Reviewed:\t' + str(assignmentsViewed - assignmentsComplete))
+	print ('Assignments Presently Available:\t' + str(totalAssignmentsAvailable))
+	print ('Assignments Presently Completed:\t' + str(assignmentsComplete))
+	print ('Assignments Presently Pending Review:\t' + str(pendingReview))
+	print ('Completed Download. Created all_submitted.txt')
+	print()
 
 
 
@@ -78,16 +107,28 @@ def storeHits(hitBatch, allfilejsons):
 		jsonStore.write(js+'\n')
 
 def getAndStoreAcceptedHits(hitBatch):
+	print('Downloading Accepted Hit Data')
 	aj = []
 	hitfile = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r') # Iterate through every hit specified in hit file, get he apprpriate response and process it
+	hitsProcessed = 0
+	assignmentsViewed = 0
+	imagesProcessed = 0
 	for line in hitfile:
 		line = line[:-1]
 		hitid = line.split(', ')[1]
 		resp = getAcceptedResponse(hitid)
-		af = af + processResponse(resp)
+		processed = processResponse(resp)
+		aj = aj + processed
+		hitsProcessed += 1
+		assignmentsViewed += resp['NumResults']
+		imagesProcessed += len(processed)
+		print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Accepted: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed) , end ="\r")
+	print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Accepted: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed))
 	jsonStore = open(topLevelDir + '/'+hitBatch+'/accepted.txt', 'w')
-	for js in allfilejsons:
+	for js in aj:
 		jsonStore.write(js+'\n')
+	print ('Created accepted.txt file from known accepted hits')
+	print()
 
 def retrieve(userName, hitBatch, pubType):
 	config = configparser.ConfigParser()
@@ -111,7 +152,24 @@ def retrieve(userName, hitBatch, pubType):
 		endpoint_url = eurl,
 		region_name = region_name,
 		aws_access_key_id = config[userName]['awskey'], 			## Put Amazon Web Services Access Keys in config.ini File
-	    aws_secret_access_key = config[userName]['awssakey'], 
+		aws_secret_access_key = config[userName]['awssakey'], 
 	)
+	print()
+	print('Batch Metadata: ')
+	print(getMetaData(hitBatch))
 	processAllHits(hitBatch)
-	storeAcceptedHits(hitBatch)
+	getAndStoreAcceptedHits(hitBatch)
+
+def getMetaData(hitBatch):
+	hitid = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r').readline().split(', ')[1][:-1]
+	response = client.get_hit(HITId=hitid)['HIT']
+		 
+	metaDataString = ('Batch ID: \t\t' + hitBatch 
+		+ '\nCreation Time:   \t' + response['CreationTime'].strftime('%m/%d/%Y at %I:%M:%S %p %Z') 
+		+ '\nExpiration Time: \t' + response['Expiration'].strftime('%m/%d/%Y at %I:%M:%S %p %Z') 
+		+ '\nEarliest Auto-Approval: ' + (response['CreationTime'] + datetime.timedelta(0,response['AutoApprovalDelayInSeconds'])).strftime('%m/%d/%Y at %I:%M:%S %p %Z') 
+		+ '\nMax Assignments: \t' + str(response['MaxAssignments']) 
+		+ '\nReward: \t\t' + str(response['Reward']) 
+		)
+	return metaDataString
+
