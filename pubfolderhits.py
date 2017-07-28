@@ -68,8 +68,8 @@ def publishHit(folder, imgSet, client, ann, upTime):
 
 def publishAll(folderName, numPer, client, ann, upTime, productionBool):
     hitfileFolder = topLevelDir + '/'+folderName+time.strftime("%Y%m%d-%H%M%S")
-    if (productionBool)
-    hitFileFolder += '_production'
+    if (productionBool):
+        hitfileFolder += '_production'
     os.mkdir(hitfileFolder)
     hitfileName = hitfileFolder + '/hitList.txt'
     hitidfile = open(hitfileName,'w')

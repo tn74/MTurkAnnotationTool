@@ -21,7 +21,7 @@ processingOneLargeImage -	True if this hitBatch contains hits for a large satell
 """
 #===================================== Set the variables below before you run the script
 user = 'Bradbury'
-hitBatch = 'StolenFromGPU' 
+hitBatch = 'Power_Plants_5500_6000JPG20170728-113450_production' 
 serverType = 'production'
 #=====================================
 

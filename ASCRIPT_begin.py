@@ -32,11 +32,11 @@ annotations				-	Array of things you would like the Turk Users to annotate in ea
 Set the variables below before you run the script
 """
 #=====================================
-folderToPublish = 'Norfolk_01_training' # Must be name of image that was cut if using LargeImage pre and post processing scripts
-user = 'Trishul' # Name of user inside config file
-serverType = 'developer'				
-imagesPerPerson = 2 
-annotations = ['building','road','powerplant']
+folderToPublish = 'Power_Plants_5500_6000JPG' # Must be name of image that was cut if using LargeImage pre and post processing scripts
+user = 'Bradbury' # Name of user inside config file
+serverType = 'production'				
+imagesPerPerson = 5 
+annotations = ['powerplant']
 
 #=====================================
 

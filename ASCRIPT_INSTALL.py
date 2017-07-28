@@ -24,7 +24,7 @@ firbaseProjectID				- 	The id of your firebase project that will be used to comm
 									annnotation tool online
 """
 #====================== Set Variables below
-firebaseProjectID = 'Your firebase project id here'
+firebaseProjectID = 'amtannotate'
 #====================== 
 
 
