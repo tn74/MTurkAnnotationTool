@@ -94,7 +94,7 @@ def processAllHits(hitBatch):
 	print ('Assignments Missing: \t\t\t' + str(intendedMax-assignmentsViewed))
 	print ('Assignments We Haven\'t Reviewed:\t' + str(assignmentsViewed - assignmentsComplete))
 	print ('Assignments Presently Available:\t' + str(totalAssignmentsAvailable))
-	print ('Assignments Presently Reviewed:\t' + str(assignmentsComplete))
+	print ('Assignments Presently Reviewed:\t\t' + str(assignmentsComplete))
 	print ('Completed Download. Created all_submitted.txt')
 	print()
 
