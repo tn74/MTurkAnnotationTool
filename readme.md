@@ -99,7 +99,7 @@ Feel free to use the existing helpfiles as templates when making your own or mak
 1. Place images you would like to annotate in a folder inside ```toWeb/images/``` 
 2. Firebase deploys your site
 3. ```publish()```, a function inside ```pubfolderhits.py``` is called and publishes a HIT to MTurk using your IAM user's API keys. 
-	- ```pubfolderhits.py``` contains all the functions related to creating hits. If you want to change HIT parameters go to 
+	- ```pubfolderhits.py``` contains all the functions related to creating hits. If you want to change HIT parameters go to publishHit inside pubfolderhits.py and edit properties like below near line 50
 		- Compensation for HIT
 		- Location Restrictions for a HIT
 
