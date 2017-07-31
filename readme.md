@@ -147,10 +147,10 @@ You will often want to ensure the validity and accuracy of your annotation datas
 - When you click reject, a message ('Sorry, your annotations look incomplete!') is sent to the Turk user who annotated incorrectly. This message can be modified by editing the 'RequesterFeedback' variable in usefulBotoFunctions.py. 
 - Both accepted and rejected HITs are transcribed (in their JSON form) to accepted.txt and rejected.txt respectively. 
 
-IMPORTANT: To run the Hitchecker from Terminal, you should provide an input parameter using '-f'/'--folder' to let the script know the location of the JSON file that contains the HITs that you want to evaluate. 
-Example: Say we want to evaluate a recent set of 100 HITs completed by Turkers. The images that we uploaded to Turk for this set and a text file of the json responses are stored in indJSONS.txt in this folder. To run the Hitchecker on this set of HITs, we run the following from Terminal, which will read the indJSONS.txt file from the input folder: 
+IMPORTANT: To run the Hitchecker from Terminal, you should provide an input parameter using '-f'/'--folder' to let the script know the location of the JSON file that contains the HITs that you want to evaluate. You should also provide a second input using '-c'/'--clientname' to indicate the name of the Amazon Mechanical Turk client that you want to connect to using the API. 
+Example: Say we want to evaluate a recent set of 100 HITs completed by Turkers. The images that we uploaded to Turk for this set and a text file of the json responses are stored in indJSONS.txt in this folder. To run the Hitchecker on this set of HITs, we run the following from Terminal, which will read the indJSONS.txt file from the input folder, and also get the name of the Amazon Mechanical Turk client being used:  
 ````
-$ python ASCRIPT_hit_checker.py --folder images 
+$ python ASCRIPT_hit_checker.py --folder images --clientname kyle 
 100
 ````
 You should immediately see a printed number indicated the number of HITs inside the text file of jsons. The program will now work to generate and load all the annotated images given the data in this text file, so you will need to wait a few minutes. You will then see the GUI launch with annotated images. To adjust the size of the windows or the resizing of the images, change the lines in the GUI class in ASCRIPT_hit_checker.py under the comment that indicates these options (line 91). 
