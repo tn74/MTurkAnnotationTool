@@ -1,7 +1,6 @@
 """
 This program runs a GUI that allows a user to approve or reject HIT annotation tasks on a per image basis. It outputs a
-.txt file with the assignment IDs of the accepted HITs, a separate for the rejected ones, and also uses boto3 and the
- usefulFunctions.py to approve Hits via the Turk API.
+.txt file with the assignment IDs of the accepted HITs, a separate for the rejected ones, and uses boto3 clients to approve Hits via the Turk API.
 
 Author: Shamikh Hossain (ssh50@duke.edu)
 Organization: Duke Energy Data Analytics Lab
@@ -11,7 +10,7 @@ from tkinter import Tk, Label, Button
 from PIL import Image
 from PIL.ImageDraw import Draw
 import json
-import usefulFunctions as uf
+import usefulBotoFunctions as uf
 import usefulImageFunc as ui
 from tkinter import *
 from PIL import Image, ImageTk
@@ -188,7 +187,7 @@ rej.close()
 
 uf.approveAssignments(uf.createRealClient("Bradbury"), accepted_ids) # Approve HITs with boto3
 uf.rejectAssignments(uf.createRealClient("Bradbury"), rejected_ids) # Reject HITs with boto3
-jr.condenseUnconnected(args['folder'], 'accepted.txt')
+jr.consolidateLargeImage(args['folder'], 'accepted.txt')
 
 
 
