@@ -94,8 +94,7 @@ def processAllHits(hitBatch):
 	print ('Assignments Missing: \t\t\t' + str(intendedMax-assignmentsViewed))
 	print ('Assignments We Haven\'t Reviewed:\t' + str(assignmentsViewed - assignmentsComplete))
 	print ('Assignments Presently Available:\t' + str(totalAssignmentsAvailable))
-	print ('Assignments Presently Completed:\t' + str(assignmentsComplete))
-	print ('Assignments Presently Pending Review:\t' + str(pendingReview))
+	print ('Assignments Presently Reviewed:\t\t' + str(assignmentsComplete))
 	print ('Completed Download. Created all_submitted.txt')
 	print()
 
@@ -122,8 +121,8 @@ def getAndStoreAcceptedHits(hitBatch):
 		hitsProcessed += 1
 		assignmentsViewed += resp['NumResults']
 		imagesProcessed += len(processed)
-		print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Accepted: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed) , end ="\r")
-	print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Accepted: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed))
+		print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Received: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed) , end ="\r")
+	print ('Hits Viewed: ' + str(hitsProcessed) + ', ' + 'Assignments Received: ' + str(assignmentsViewed) + ', ' + 'Accepted Images: ' + str(imagesProcessed))
 	jsonStore = open(topLevelDir + '/'+hitBatch+'/accepted.txt', 'w')
 	for js in aj:
 		jsonStore.write(js+'\n')

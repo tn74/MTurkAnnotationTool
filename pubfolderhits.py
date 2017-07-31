@@ -66,8 +66,10 @@ def publishHit(folder, imgSet, client, ann, upTime):
     print ("Your HIT ID is: {}".format(hit_id))
     return hit_id
 
-def publishAll(folderName, numPer, client, ann, upTime):
+def publishAll(folderName, numPer, client, ann, upTime, productionBool):
     hitfileFolder = topLevelDir + '/'+folderName+time.strftime("%Y%m%d-%H%M%S")
+    if (productionBool):
+        hitfileFolder += '_production'
     os.mkdir(hitfileFolder)
     hitfileName = hitfileFolder + '/hitList.txt'
     hitidfile = open(hitfileName,'w')
@@ -89,6 +91,7 @@ def publishAll(folderName, numPer, client, ann, upTime):
         
         
 def publish(foldername, numPer, pubType, ann, user):
+    productionBool = False
     config = configparser.ConfigParser()
     config.read('config.ini')
     region_name = 'us-east-1'
@@ -97,7 +100,8 @@ def publish(foldername, numPer, pubType, ann, user):
         upTime = 600
     elif pubType == 'production':
         endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
-        upTime = 604800
+        upTime = 604800*2
+        productionBool = True
     else:
         raise NameError('Must specify developer or production type deployment')
         return 
@@ -109,4 +113,4 @@ def publish(foldername, numPer, pubType, ann, user):
     )
 
 
-    publishAll(foldername, numPer, client, ann, upTime)
+    publishAll(foldername, numPer, client, ann, upTime, productionBool)

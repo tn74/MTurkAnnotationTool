@@ -22,15 +22,17 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 - Approve or Reject Turker's Work 
 
 ### How Do I Use It?
-1. Follow the installation procedures outlined below
-2. There are two ways you can use the program as given with ASCRIPT_begin.py
-	1. You can annotate a collection of independent and unconnected images
-	2. You can annotate a very large image that can be cut into custom size squares before being passed on to Turkers
-		- This method was developed to help annotate satellite images covering large swathes of territory for specific features
-Open ASCRIPT_begin.py and read the variable information at the head of the file for more information
+1. Install the software according to the instructions later in this ReadMe. By the end, you must have a Firebase account with google, and Amazon Web Services API keys for users that have access to the Turk API.
+2. Open up config.ini (which is created by the installation script) and ensure the following
+	- ```firebaseSubdomain``` is set equal to the project-id of the firebase project you are using
+	- ```[User Name]``` is set to something you would remember (for a person named John, this might be written as ```[John]```)
+	- ```awskey``` is set to your IAM user's access key
+	- ```awssakey``` is set to your IAM user's secret access key
+
+3. Open ASCRIPT_begin.py. This is a file that will allow you to publish HITS for Turkers to work on. Set the variables at the beginning to 
 
 
-### Dependencies (Tested With in Parenthesis):
+### Dependencies (Tested Version in Parenthesis):
 - Python 3.x (3.6)
 - pillow (Python Imaging Library/PIL) (4.1.1)
 - boto3 (1.4.4) 
@@ -50,7 +52,7 @@ $ pip install -r requirements.txt
 	3. Login to Firebase [Console](https://console.firebase.google.com/)
 	4. Create a Firebase Project
 	5. Open terminal and move into the MTurkAnnotationTool/toWeb directory
-	6. Run ```bash firebase list``` in terminal and see the project-id for the project that you just created
+	6. Run ```firebase list``` in terminal and see the project-id for the project that you just created
 	7. Open the script ASCRIPT_INSTALL.py
 	8. Set the firebaseProjectID equal to your project-id 
 	9. Run the ASCRIPT_INSTALL.py
