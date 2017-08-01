@@ -41,6 +41,7 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 - Firebase Command Line Tools (from https://firebase.google.com/docs/cli/)
 
 ### Installation:
+We recommend conducting this procedure inside a Python Virtual Environment. Please create and activate one with the python package virtualenv or conda if you are using Anaconda.
 1. Clone this repository and install all dependencies. For a quick way to do this, try the following: 
 ````
 $ pip install -r requirements.txt
