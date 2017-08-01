@@ -28,9 +28,9 @@ def genConfArrays(hitBatch, jsonfile, *args):
 			print('Made to ourdir')
 		except: 
 			try:
-				img = Image.open('toWeb/public/Images/'+imgJSON['fileName'])
+				img = Image.open('toWeb/public/images/'+imgJSON['fileName'])
 			except: 
-				raise Exception('Could not find image to develop confidence map: ' + 'toWeb/public/Images/'+imgJSON['fileName'] + ' Make sure hte image is either inside toWeb/Images inside a folder with the other cut images or imToCut')
+				raise Exception('Could not find image to develop confidence map: ' + 'toWeb/public/images/'+imgJSON['fileName'] + ' Make sure hte image is either inside toWeb/images inside a folder with the other cut images or imToCut')
 		if not os.path.exists(outdir):
 			os.mkdir(outdir)
 		else: continue
