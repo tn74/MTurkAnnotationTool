@@ -5,11 +5,10 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 
 ### What Can You Do With It?:
 - Annotate as many images as you like simultaneously
-- Annotate objects insideimages with any of the below tools:
+- Annotate objects inside images with any of the below tools:
  	- Polygon
  	- Line 
     - Point
-    - More If You Code Them (instructions coming soon)
 - Annotate for as many objects as you like in a single image
 - Provide instructions to Turkers for each object to be annotated
 - Specify how many Turkers annotate the same image
@@ -23,13 +22,24 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 
 ### How Do I Use It?
 1. Install the software according to the instructions later in this ReadMe. By the end, you must have a Firebase account with google, and Amazon Web Services API keys for users that have access to the Turk API.
+
 2. Open up config.ini (which is created by the installation script) and ensure the following
 	- ```firebaseSubdomain``` is set equal to the project-id of the firebase project you are using
 	- ```[User Name]``` is set to something you would remember (for a person named John, this might be written as ```[John]```)
 	- ```awskey``` is set to your IAM user's access key
 	- ```awssakey``` is set to your IAM user's secret access key
 
-3. Open ASCRIPT_begin.py. This is a file that will allow you to publish HITS for Turkers to work on. Set the variables at the beginning to 
+3. Open ASCRIPT_begin.py. This is a file that will allow you to publish HITS for Turkers to work on. Set the variables at the beginning and run the script to publish the HITs. Running the script will create a folder inside HITBatches that contain all the data relavant to this batch of HITs you have published.
+
+4. Let your turkers work!
+
+5. Open ASCRIPT_finish.py and set the variables at the start of that script. Run it to download all the data that has been submitted to you.
+
+6. Run ASCRIPT_hit_checker.py from terminal to approve or reject work that Turkers have submitted to you. 
+
+7. Rerun ASCRIPT_finish.py to process the accepted data and produce confidence maps for each image you published. You will get a raw and normalized confidence map for each object you chose to annotate for. The raw map contains, at each pixel, the number of annotators who labeled that pixel as part of an object. The 
+	- You can view these confidence maps in HITBatches/[Your Hit Batch Name]/data/[image name] where [Your Hit Batch Name] is the name of the folder created when you published this batch of hits and [image name] is the name of the specific image you would like a confidence map for.
+	- You can also see the raw annotation data (like coordinates for your polygons, lines, points, etc) for each image you have received in JSON format inside one of the .txt files. See the Output Documents Section for more information about each of the txt files and the outputs from this program.
 
 
 ### Dependencies (Tested Version in Parenthesis):
@@ -73,7 +83,7 @@ $ pip install -r requirements.txt
 	awssakey = 1234
 
 	```
-5. Test if installation was successful by following the below instructions
+5. Test if installation was successful by running the below scripts in order
 	1. EXTENSION_PreprocessLargeImage.py
 	2. ASCRIPT_begin.py
 	
@@ -98,16 +108,27 @@ Feel free to use the existing helpfiles as templates when making your own or mak
 
 ### How Does It Work?
 
+#### Some Terms:
+	- **Hit Batch**: A group of HITs that go together because they were all created together during a single run of ASCRIPT_begin.py. All the HITs in one hit batch will be for images inside the same subfolder of toWeb/images and will be published at roughly the same time
+
 ##### Publishing Hits
 1. Place images you would like to annotate in a folder inside ```toWeb/images/``` 
-2. Firebase deploys your site
-3. ```publish()```, a function inside ```pubfolderhits.py``` is called and publishes a HIT to MTurk using your IAM user's API keys. 
-	- ```pubfolderhits.py``` contains all the functions related to creating hits. If you want to change HIT parameters go to publishHit inside pubfolderhits.py and edit properties like below near line 50
-		- Compensation for HIT
-		- Location Restrictions for a HIT
+2. Firebase deploys everything inside toWeb/public to your site
+3. ```publish()```, a function inside ```pubfolderhits.py``` is called and publishes HITs to MTurk using your IAM user's API keys. 
+	- ```pubfolderhits.py``` contains all the functions related to creating hits. If you want to change HIT parameters go to publishHit inside pubfolderhits.py and edit properties (like the ones below) near line 50
+		- Compensation for HIT (Currently $0.02)
+		- Location Restrictions for a HIT (Currently None)
+		- Time to Complete a HIT (Currently 10 minutes)
+		- Time HIT will remain online (Currently 2 weeks for production HITs)
+4. When ```publish()``` creates a hit, it tells Amazon to display a webpage inside a Turker's workspace. The webpage is hosted on your firebaseapp site. The URL of that webpage specifies the image to be annotated and the objects to be annotated for. More on that in the next section "Turkers Working Online"
+3. A folder is created inside HITBatches named with your batch's id. The batch id consists of the name of the image folder published + a timestamp. This folder will contain all the information that is relevant to this **hit batch**) or 
+4. A file ```hitList.txt``` is created inside the hit batch folder. Each line is one HIT. A line contains the HIT's ID and the information required to reconstruct the path of the image from ```toWeb/images```
+
+##### Turkers Working Online
+1. Turkers work on the web based image annotation platform that is dynamically created with javascript.
 
 
-### Adding Functionality
+### Additional Functionality
 #### Adding A New Type Of Object to Annotate
 For every object (let's call it _obj_) you would like to annotate, you must do the following:
 1. Provide a sample called obj.png inside toWeb/public/images/sample
@@ -121,13 +142,13 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 		```
 		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
 		```
-	- The program ships with support for "polygon", "line", and "point" annotation types
+	- The program supports "polygon", "line", and "point" annotation types
 4. Add the name of the object to annotations list when running ASCRIPT_begin.py
 
 #### Processing Large Satellite Images
-For every object (let's call it _obj_) you would like to annotate, you must do the following:
+For every object (let's call it obj) you would like to annotate, you must do the following:
 1. Provide a sample called obj.png inside toWeb/public/images/sample
-2. Provide a help file written in HTML inside toWeb/public/helper
+2. Provide a help file written in HTML inside toWeb/public/helper called obj.html
 3. Add an entry into fileTypes indicating the tool used to annotate the object in toWeb/public/js/neededJSONS.json
 	- If obj were to be annotated with a line,
 		```
@@ -138,7 +159,7 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
 		```
 	- The program ships with support for "polygon", "line", and "point" annotation types
-4. Add the name of the object to annotations list when running ASCRIPT_begin.py
+5. You are ready to annotate for your new object! Add the name of the object to annotations list when running ASCRIPT_begin.py
 
 
 #### Verifying annotations: Using the Hitchecker (ASCRIPT_hit_checker.py)
