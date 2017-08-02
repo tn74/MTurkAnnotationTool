@@ -36,7 +36,7 @@ folderToPublish = 'Norfolk_01_training' # Must be name of image that was cut if 
 user = 'Trishul' # Name of user inside config file
 serverType = 'developer'				
 imagesPerPerson = 2 
-annotations = ['building','road','powerplant']
+annotations = ['building','road','car']
 
 #=====================================
 
