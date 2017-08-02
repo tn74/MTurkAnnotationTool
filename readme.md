@@ -1,7 +1,9 @@
 # The MTurk Annotation Tool
 
 ### What is it?
-The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
+The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work. 
+
+ ** Note: Readme is still under construction **
 
 ### What Can You Do With It?:
 - Annotate as many images as you like simultaneously
@@ -31,7 +33,7 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 
 3. Open ASCRIPT_begin.py. This is a file that will allow you to publish HITS for Turkers to work on. Set the variables at the beginning and run the script to publish the HITs. Running the script will create a folder inside HITBatches that contain all the data relavant to this batch of HITs you have published.
 
-4. Let your turkers work!
+4. Let your turkers work! 
 
 5. Open ASCRIPT_finish.py and set the variables at the start of that script. Run it to download all the data that has been submitted to you.
 
@@ -125,7 +127,41 @@ Feel free to use the existing helpfiles as templates when making your own or mak
 4. A file ```hitList.txt``` is created inside the hit batch folder. Each line is one HIT. A line contains the HIT's ID and the information required to reconstruct the path of the image from ```toWeb/images```
 
 ##### Turkers Working Online
-1. Turkers work on the web based image annotation platform that is dynamically created with javascript.
+1. Turkers work on the web based image annotation platform that is dynamically created with javascript. The platform is dynamically generated according to a url that is structured like below:
+	- ```https://[firebaseProjectID].firebaseapp.com/index.html?category-image=[image subfolder]+[image1]+[image2]+[image3]&annotation=[object1]+[object2]```
+		- ```[image subfolder]``` is the name of the folder inside ```toWeb/images``` containing the images to be annotated
+		- ```[image1]```, ```[image2]```... are the names of the images (including file extension) inside that folder that should all be annotated together in one HIT
+		- ```[object1]```,```[object2]```... are the names of objects to be annotated for each image in this HIT.
+	- If you have images on your site right now, you can test this out by specifying an image and annotation object and going to that url. It will not affect any HITs you have active
+2. Once annotations for one image are complete, a button to the right of the image will take the user to the next image. On the last image, that button will change to say "Submit Results"
+3. To understand how the webpage portion works, it may be best to open the html and javascript portions of the page itself. They are inside toWeb/public. The base html is in ```index.html```. The javascript is inside the js folder. The dynamic display of the site is taken care of in ```displays.js```. The annotation javascript is inside ```annotationCode.js```
+
+##### Downloading Data and Approving/Rejecting HITs
+1. Run ASCRIPT_finish.py after setting the appropriate variables at the start of the script
+2. The annotations for each image submitted to you will be stored in JSON Format (1 line per image) inside all_submitted.txt, a text file inside your specific hit batch folder. Learn more about the JSON format [here](https://github.com/tn74/MTurkAnnotationTool/wiki/all_submitted.txt-&-accepted.txt-JSON-Data-Structure)
+3. The JSON for the condensed images will also be stored in condensed_all_submitted.txt
+	- A condensed image combines the annotations of everyone who annotated the same image into one line of JSON. For example, if three people annotated powerplants on top of an image independently, a condensed image would have all three polygons in the same line of JSON
+	- All condensed JSON is stored in condensed_all_submitted.txt
+	- A visual represntation of each condensed image, where each annotated feature is drawn, is stored in allSubmittedCondensedImages.
+
+3. Run ```ASCRIPT_hit_checker.py``` script with the proper variables and accept or reject annotations. The hitcheker:
+	- Reads through each line of all_submitted.txt
+	- Generates an image of the annotations given the JSON data
+	- Displays the image in a window and asks you to accept or reject the annotation
+	- Accepts all assignments containing an image that you accepted and rejects those that contained no image that you accepted once you close out the hit_checker GUI.
+	 --folder**Note:** The only way to reject an assignment and not provide that Turker compensation is if you reject every image that they annotated. If you offered them 10 images to annotate and you rejected 9 of them, you will still pay them the full compensation for the 1 image you accepted.
+ 	- Writes the line of JSON for each accepted annotation into accepted.txt
+
+4. Rerun ```ASCRIPT_finish.py``` 
+	- Will download new unreviewed data for hit checker to process
+	- Creates condensed images using only accepted data. 
+		- The JSONS are stored in condensed_accepted.txt 
+		- The visual representations are stored in acceptedCondensedImages
+	- Will begin populating data folder with confidence maps for each image and annotated object using only accepted data
+		- Inside data, a folder will be created for each iamge annotated and it will be named the same as the image without the file extension.
+		- Inside the image's folder will be a raw and normalized confidence map for each object annotated
+			- The raw map contains, at every pixel, the number of people who thought this was part of a feature
+			- The normalized map contains, at every point, the relative confidence of a point being part of a feature with the highest relative confidence having a value of 255, visualized as white, and the lowest having 0, visualized as black. Note that this is a relative confidence. An image that has a maximum of two people annotating any given point as a feature will show 2 as 255. Another image that has a max of 20 people annotating any given point will show 20 as 255. The normalized map is meant as an easy visualization. For data processing purposes, we recommend using the raw map.
 
 
 ### Additional Functionality
@@ -146,20 +182,7 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 4. Add the name of the object to annotations list when running ASCRIPT_begin.py
 
 #### Processing Large Satellite Images
-For every object (let's call it obj) you would like to annotate, you must do the following:
-1. Provide a sample called obj.png inside toWeb/public/images/sample
-2. Provide a help file written in HTML inside toWeb/public/helper called obj.html
-3. Add an entry into fileTypes indicating the tool used to annotate the object in toWeb/public/js/neededJSONS.json
-	- If obj were to be annotated with a line,
-		```
-		fileTypes = '[{"road":"line","powerplant":"polygon"}]' 
-		```
-	- would become
-		```
-		fileTypes = '[{"road":"line","powerplant":"polygon","obj":"line"}]'
-		```
-	- The program ships with support for "polygon", "line", and "point" annotation types
-5. You are ready to annotate for your new object! Add the name of the object to annotations list when running ASCRIPT_begin.py
+	- Info Coming Soon
 
 
 #### Verifying annotations: Using the Hitchecker (ASCRIPT_hit_checker.py)
