@@ -1,7 +1,9 @@
 # The MTurk Annotation Tool
 
 ### What is it?
-The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work.
+The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work. 
+
+Note: Readme is still being built
 
 ### What Can You Do With It?:
 - Annotate as many images as you like simultaneously
@@ -125,7 +127,14 @@ Feel free to use the existing helpfiles as templates when making your own or mak
 4. A file ```hitList.txt``` is created inside the hit batch folder. Each line is one HIT. A line contains the HIT's ID and the information required to reconstruct the path of the image from ```toWeb/images```
 
 ##### Turkers Working Online
-1. Turkers work on the web based image annotation platform that is dynamically created with javascript.
+1. Turkers work on the web based image annotation platform that is dynamically created with javascript. The platform is dynamically generated according to a url that is structured like below:
+	- ```https://[firebaseProjectID].firebaseapp.com/index.html?category-image=[image subfolder]+[image1]+[image2]+[image3]&annotation=[object1]+[object2]```
+		- ```[image subfolder]``` is the name of the folder inside ```toWeb/images``` containing the images to be annotated
+		- ```[image1]```, ```[image2]```... are the names of the images (includign file extension) inside that folder that should all be annotated together in one HIT
+		- ```[object1]```,```[object2]```... are the names of objects to be annotated for each image in this HIT.
+	- If you have images on your site right now, you can test this out by specifying an image and annotation object and going to that url. It will not affect any HITs you have active
+2. Once annotations for one image are complete, a button to the right of the image will take the user to the next image. On the last image, that button will change to say "Submit Results"
+3. To understand how the webpage portion works, it may be best to open the html and javascript portions of the page itself. They are inside toWeb/public. The base html is in ```index.html```. The javascript is inside the js folder. The dynamic display of the site is taken care of in ```displays.js```. The annotation javascript is inside ```annotationCode.js```
 
 
 ### Additional Functionality
