@@ -188,9 +188,17 @@ for i in rejected:
      rej.write(i.txt)
 rej.close()
 
-uf.approveAssignments(uf.createRealClient(args['clientname']), accepted_ids) # Approve HITs with boto3
-uf.rejectAssignments(uf.createRealClient(args['clientname']), rejected_ids) # Reject HITs with boto3
-
+try:
+    uf.approveAssignments(uf.createRealClient(args['clientname']), accepted_ids) # Approve HITs with boto3
+    uf.rejectAssignments(uf.createRealClient(args['clientname']), rejected_ids) # Reject HITs with boto3
+except Exception as err:
+    try:
+        uf.approveAssignments(uf.createSandboxClient(args['clientname']), accepted_ids) # Approve HITs with boto3
+        uf.rejectAssignments(uf.createSandboxClient(args['clientname']), rejected_ids) # Reject HITs with boto3
+    except Exception as e:
+        print ("Unable to approve or reject assignemnts")
+        print("Attempting Real Client Error: " + str(err))
+        print("Attempting Sandbox Client Error: " + str(e))
 
 
 if not os.path.exists('HITBatches/' + args['folder'] + '/acceptedCondensedImages'):
