@@ -1,7 +1,6 @@
 """
 This program runs a GUI that allows a user to approve or reject HIT annotation tasks on a per image basis. It outputs a
 .txt file with the assignment IDs of the accepted HITs, a separate for the rejected ones, and uses boto3 clients to approve Hits via the Turk API.
-
 Author: Shamikh Hossain (ssh50@duke.edu)
 Organization: Duke Energy Data Analytics Lab
 """
@@ -23,7 +22,7 @@ ap = argparse.ArgumentParser(description='Accept or reject hits from the entered
 ap.add_argument("-f", "--folder", type=str, default= ".",
 help= "String name of the folder inside the 'HITBatches' directory that contains all_submitted.txt (a txt file of jsons). ex: powerplants")
 
-ap.add_argument("-c", "--clientname", type=str, default= "Kyle",
+ap.add_argument("-c", "--clientname", type=str, default= "Bradbury",
 help= "Case-sensitive string name of the Amazon Mechanical Turk client being used. ex: John")
 
 args = vars(ap.parse_args())
@@ -201,6 +200,7 @@ except Exception as err:
         print("Attempting Real Client Error: " + str(err))
         print("Attempting Sandbox Client Error: " + str(e))
 
+
 if not os.path.exists('HITBatches/' + args['folder'] + '/acceptedCondensedImages'):
     os.mkdir('HITBatches/' + args['folder'] + '/acceptedCondensedImages')
 print('Making images with only accepted annotations ')
@@ -210,6 +210,3 @@ for line in open('HITBatches/'+args['folder']+'/condensed_accepted.txt').readlin
     print(line)
     pilimage.save('HITBatches/'+args['folder']+'/acceptedCondensedImages/'+js['fileName'].split('/')[1].split('.')[0]+'ANN.jpg')
 print('Done Making Images')
-
-
-

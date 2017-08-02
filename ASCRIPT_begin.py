@@ -37,7 +37,6 @@ user = 'Trishul' # Name of user inside config file
 serverType = 'developer'				
 imagesPerPerson = 2 
 annotations = ['building','road','car']
-
 #=====================================
 
 import os
