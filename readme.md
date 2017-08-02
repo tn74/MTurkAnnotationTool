@@ -3,7 +3,7 @@
 ### What is it?
 The MTurk Annotation tool is a customizable open-source platform that allows you to collect crowdsourced image annotations from users (Turkers) on Amazon Mechanical Turk (MTurk). The program deploys all the images and tools and you need to annotate to a Google Firebase app and interfaces with MTurk through their "External Question" feature. Once Turkers finish annotating your images, you have the ability to approve or reject their work, paying them only for quality work. 
 
-Note: Readme is still being built
+ ** Note: Readme is still under construction **
 
 ### What Can You Do With It?:
 - Annotate as many images as you like simultaneously
