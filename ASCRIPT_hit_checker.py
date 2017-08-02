@@ -201,9 +201,6 @@ except Exception as err:
         print("Attempting Real Client Error: " + str(err))
         print("Attempting Sandbox Client Error: " + str(e))
 
-jr.consolidateLargeImage(args['folder'], 'accepted.txt')
-
-
 if not os.path.exists('HITBatches/' + args['folder'] + '/acceptedCondensedImages'):
     os.mkdir('HITBatches/' + args['folder'] + '/acceptedCondensedImages')
 print('Making images with only accepted annotations ')
