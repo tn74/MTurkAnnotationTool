@@ -22,7 +22,7 @@ ap = argparse.ArgumentParser(description='Accept or reject hits from the entered
 ap.add_argument("-f", "--folder", type=str, default= ".",
 help= "String name of the folder inside the 'HITBatches' directory that contains all_submitted.txt (a txt file of jsons). ex: powerplants")
 
-ap.add_argument("-c", "--clientname", type=str, default= "Kyle",
+ap.add_argument("-c", "--clientname", type=str, default= "Bradbury",
 help= "Case-sensitive string name of the Amazon Mechanical Turk client being used. ex: John")
 
 args = vars(ap.parse_args())
@@ -190,7 +190,6 @@ rej.close()
 
 uf.approveAssignments(uf.createRealClient(args['clientname']), accepted_ids) # Approve HITs with boto3
 uf.rejectAssignments(uf.createRealClient(args['clientname']), rejected_ids) # Reject HITs with boto3
-jr.consolidateLargeImage(args['folder'], 'accepted.txt')
 
 
 
