@@ -157,7 +157,7 @@ def retrieve(userName, hitBatch, pubType):
 	print('Batch Metadata: ')
 	print(getMetaData(hitBatch))
 	processAllHits(hitBatch)
-	getAndStoreAcceptedHits(hitBatch)
+	#getAndStoreAcceptedHits(hitBatch)
 
 def getMetaData(hitBatch):
 	hitid = open(topLevelDir + '/' + hitBatch + '/hitList.txt','r').readline().split(', ')[1][:-1]
