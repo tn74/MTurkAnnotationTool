@@ -37,7 +37,9 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 
 5. Open ASCRIPT_finish.py and set the variables at the start of that script. Run it to download all the data that has been submitted to you.
 
-6. Run ASCRIPT_hit_checker.py from terminal to approve or reject work that Turkers have submitted to you. 
+6. Run ASCRIPT_hit_checker.py from terminal to approve or reject work that Turkers have submitted to you. If you want to approve HITs for a hitBatch "Norfolk_01_training20170727-152336" using credentials for "Student", then you should move into the MTurkAnnotationTool directory and type into terminal:
+
+```python3 ASCRIPT_hit_checker.py --folder Norfolk_01_training20170727-152336 --clientname Student```
 
 7. Rerun ASCRIPT_finish.py to process the accepted data and produce confidence maps for each image you published. You will get a raw and normalized confidence map for each object you chose to annotate for. The raw map contains, at each pixel, the number of annotators who labeled that pixel as part of an object. The 
 	- You can view these confidence maps in HITBatches/[Your Hit Batch Name]/data/[image name] where [Your Hit Batch Name] is the name of the folder created when you published this batch of hits and [image name] is the name of the specific image you would like a confidence map for.
@@ -50,7 +52,7 @@ The MTurk Annotation tool is a customizable open-source platform that allows you
 - boto3 (1.4.4) 
 - matplotlib (2.0.2)
 - numpy (1.12.1)
-- Firebase Command Line Tools (from https://firebase.google.com/docs/cli/)
+- Firebase Command Line Tools ([Linked Here](from https://firebase.google.com/docs/cli/))
 
 ### Installation:
 We recommend conducting this procedure inside a Python Virtual Environment. Please create and activate one with the python package virtualenv or conda if you are using Anaconda.
@@ -104,14 +106,15 @@ The program is configured to run immediately with example Object/Annotation Type
 - Powerplant: Polygon
 - Lamp Post: Point
 - Tree: Polygon
-Feel free to use the existing helpfiles as templates when making your own or make your own from scratch!
+- Feel free to use the existing helpfiles as templates when making your own or make your own from scratch!
 
 ***
 
 ### How Does It Work?
 
-#### Some Terms:
-	- **Hit Batch**: A group of HITs that go together because they were all created together during a single run of ASCRIPT_begin.py. All the HITs in one hit batch will be for images inside the same subfolder of toWeb/images and will be published at roughly the same time
+#### Some Terms: 
+ --folder__Hit Batch: __ A group of HITs that go together because they were all created together during a single run of ASCRIPT_begin.py. All the HITs in one hit batch will be for images inside the same subfolder of toWeb/images and will be published at roughly the same time
+ --folder__Condensing: __ This refers to the process of combining all the annotations made by different users into one JSON and associated image. For example, if 3 people independently annotated a powerplant on the same image, the condensing process would put all three polygons on the same image.
 
 ##### Publishing Hits
 1. Place images you would like to annotate in a folder inside ```toWeb/images/``` 
@@ -182,7 +185,11 @@ For every object (let's call it _obj_) you would like to annotate, you must do t
 4. Add the name of the object to annotations list when running ASCRIPT_begin.py
 
 #### Processing Large Satellite Images
-	- Info Coming Soon
+The MTurk Annotation Tool provides support to annotate large satellite images so you can build confidence maps for large images (tested with 10000 x 10000 pixel images). The large satellite is preprocessed by being cut into several smaller images (according to your specifications). A folder is created with those images and is posted online for annotations. The hitbach is then post-processed to reconstruct the original image with all of its annotations and generate pieced-together confidence map. Follow the steps below: 
+
+1. Place your image inside the imToCut folder
+2. Open imCut.py and see the parameters at the start of the "cut" function. The first parameter, ```length``` specifies the length of a side of the square image that the larger image will be cut into. The second parameter, ```overlap``` specifies how much overlap should exist between images. Note that you should set these parameters to match the dimensions of your image. For example, if your image is 2000 x 2000 pixels, the square side should not be set to an overlap of 300 pixels with a 50 pixel overlap, as your border images will not be clean. Set the parameters, save the file and exit. 
+3. 
 
 
 #### Verifying annotations: Using the Hitchecker (ASCRIPT_hit_checker.py)
